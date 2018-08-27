@@ -12,7 +12,9 @@ def foo():
 
 	path = 'core/comm/log.txt'
 	with open(path, 'wb') as x_files:
-		x_files.write('{}'.format(query))
+		query_bin = query.encode('utf-8')
+		#x_files.write('{}'.format(query))
+		x_files.write(query_bin)
 	return render_template('index.html')
 
 @app.route('/')
