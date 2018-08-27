@@ -1,0 +1,15 @@
+*{
+	padding : 0px;
+	margin 	: 0px;
+}
+
+body{
+	font-family: 'Actor';
+}
+.nav-div{
+	width: 100px;
+}
+
+.main-div{
+	width: 600px;
+}
