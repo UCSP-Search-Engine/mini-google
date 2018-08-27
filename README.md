@@ -9,12 +9,12 @@ git clone https://github.com/UCSP-Search-Engine/mini-google.git
 ### Mini-Google: Core
 Moverse a la carpeta descargada:
 ```
-$ cd mini-google
+$cd mini-google
 ```
 
 Ir a la carpeta 'core':
 ```
-../mini-google$ cd core
+../mini-google$cd core
 ```
 Compilar el 'main.cpp':
 ```
@@ -41,3 +41,4 @@ Ejecutar el archivo **app.py** de la carpeta:
 python app.py
 ```
 
+Finalmente abrir un navegador y colocar la url: http://localhost:5000
