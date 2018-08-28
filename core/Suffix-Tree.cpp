@@ -20,7 +20,7 @@ class Edge
         string suffixString;
         Node *startNode;
         Node *endNode;
-        int index;
+        int index; // its like their $
     
     public:
         Edge(Node *startNode, string suffixString, int index)
@@ -48,12 +48,14 @@ class Word
             this->word = word;
             this->index = index;
         }
+
+        //For printing
         string toString()
         {
             return (word + " " + to_string(index));
         }
     
-    //Getting the words
+    //Getting the words. Each word has their index according its position in the text.
     vector<Word> getWords(string text)
     {
         vector<Word> words;
@@ -84,7 +86,7 @@ class Word
         return words;
     }
     
-    //Getting the suffix
+    //Getting the word suffixes and set up their indexes.
     vector<Word> getSuffix(string word, int index)
     {
         vector<Word> suffix;
@@ -116,8 +118,8 @@ class SuffixTree
 
     
 
-    
-
+    //Start point to add the words inside the tree. First we can read the text and separate each word, 
+    //after that for each word we can extract the suffix in order to add them in the tree.
     void execution()
     {
         Word w;
@@ -140,12 +142,16 @@ class SuffixTree
         }
     }
 
+    //This function search return the correct node where we can insert the word suffix.
+    //Also it returns the edge position where the suffix has a coincidence (if it is -1 there is not a coincidence).
+    // On the other side, it returns the coincidence string with respect to the position to insert.
     Node * search(string &suffix, string &parteCoinciden, Node *node, int &edgePos)
     {
+        edgePos = -1;
         if(node->edges.size() == 0)
             return node;
         
-        edgePos = -1;
+        
         parteCoinciden = "";
         
         string substring1, substring2;
@@ -191,24 +197,29 @@ class SuffixTree
         return node;
     }
 
+    // Recursive search: it searches the correct node from to root.
     Node * search(string &suffix, string &parteCoinciden, int &edgePos)
     {
         return search(suffix, parteCoinciden, root, edgePos);   
     }
 
 
-
+    //
     void addSuffix(string suffix, int index)
     {
-        int edgePos = -1; //Posición de la arista
+        //In the case we use the $ sign, we must consider the next line
+        //suffix += "$";
+        int edgePos = -1; //Edge position
         string parteCoinciden = "";
+        //The search give us inside suffix the remained part to add in the tree.
         Node *node = search(suffix, parteCoinciden, edgePos);
         
+        //================================ START PRINTING =====================================
         cout<<"-----------edPos: "<<edgePos << "\t NodeEdgesSize:";
         if(node!=NULL)
             cout<<node->edges.size();
         cout<<endl;
-        
+        //==================================== END PRINTING ===================================
         
         if(edgePos == -1) // si no encontro arista adecuada, agregar un nuevo elemento al nodo
         {
@@ -223,7 +234,8 @@ class SuffixTree
 
             node->edges[edgePos].suffixString= coinciden;
 
-            if(node->edges[edgePos].endNode==NULL && (noCoinciden.size()>0 || noCoincidenEdge.size()>0) )
+            //When we need to add a new node and when there is nothing to add from the suffix word.
+            if(node->edges[edgePos].endNode==NULL && (noCoinciden.size()>0 || noCoincidenEdge.size()>0) ) 
             {
                 Node * newNode = new Node();
                 node->edges[edgePos].endNode = newNode;
@@ -273,10 +285,10 @@ class SuffixTree
 
 int main()
 {
-    string text = "HELLO WORLD";
+    //string text = "HELLO WORLD";
     //string text = "HELLO HILO";
     //string text = "HELLO LLOA";
-    //string text = "HELLO WORLD LLOA LLOAE";
+    string text = "HELLO WORLD LLOA LLOAE";
     //string text = "HELLO AE";
     SuffixTree *tree = new SuffixTree(text);
     tree->execution();
