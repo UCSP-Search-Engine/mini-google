@@ -26,12 +26,15 @@ body{
 }
 
 .main-title{
-	font-size: 60px;
+	font-size: 40px;
 	float: left;
+	font-weight:normal;
 }
 
 .query-input{
 	width: 150px;
+	font-size: 14px;
+	margin: 2px;
 }
 
 .hidden{
