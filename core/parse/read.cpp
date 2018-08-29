@@ -53,6 +53,7 @@ int main()
         textInFile[i] = textInFile[i] + frase;
         string sstart="|";
 
+        /*
         posid=textInFile[i].find(sstart);
         id[i]=stoi(recorrer(textInFile[i],posid));
 
@@ -68,12 +69,21 @@ int main()
         posend=textInFile[i].find(sstart,posdbindex+1);
         contenido[i]=textInFile[i].substr(posend+1);
 
-        cout<<i<<" mensaje: "<<id[i]<<"||"<<title[i]<<"||"<<nonfiltered[i]<<"||"<<dbindex[i] << endl;
+        cout<<i<<" mensaje: "<<id[i]<<"|"<<title[i]<<"|"<<nonfiltered[i]<<"|"<<dbindex[i] << endl;
 
+        */
+
+        posdbindex      =   textInFile[i].find(sstart);
+        dbindex[i]      =   stoi(recorrer(textInFile[i],posdbindex));
+
+        postittle       =   textInFile[i].find(sstart,posdbindex+1);
+        title[i]        =   recorrer(textInFile[i],postittle);
+
+        posend          =   textInFile[i].find(sstart,postittle+1);
+        contenido[i]    =   textInFile[i].substr(posend);
+
+        cout<<"|"<<dbindex[i]<<"|"<<title[i]<<"|"<<endl;//<<contenido[i] << endl;
         i++;                 
              
-     }
-   
-    cout<<"hello"<<endl;
-    
+     }    
 }

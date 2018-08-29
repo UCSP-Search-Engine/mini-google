@@ -87,102 +87,84 @@ string recorrer(string s,int  pos){
 
 int main () {
 
- setlocale(LC_ALL, "spanish");	
- setlocale(LC_CTYPE, "Spanish");
- string url; 
+	setlocale(LC_ALL, "spanish");	
+	setlocale(LC_CTYPE, "Spanish");
+	string url; 
 
 //-------------------lectura de data 
- string frase;
- int i=0;
- vector <string> textInFile(999999);
- ifstream ficheroEntrada;
+	string frase;
+	int i=0;
+	vector <string> textInFile(999999);
+	ifstream ficheroEntrada;
 
- ficheroEntrada.open ("../../raw.es/spanishText_10000_15000");
- while(!ficheroEntrada.eof()){  
+	ficheroEntrada.open ("../../raw.es/spanishText_10000_15000");
+	while(!ficheroEntrada.eof()){  
 
- 	getline(ficheroEntrada, frase);
- 	if(frase =="</doc>"){	
- 		continue;
- 	}
- 	if(frase =="ENDOFARTICLE."){
- 		i++;	
- 		continue;
- 	}
- 	//si no es cabecera ni fin asignarle a una variable.
- 	if(frase !="ENDOFARTICLE." && frase !="</doc>"){
- 		textInFile[i] = textInFile[i] + frase;
- 		continue;		
- 	}
- }
+		getline(ficheroEntrada, frase);
+		if(frase =="</doc>"){	
+			continue;
+		}
+		if(frase =="ENDOFARTICLE."){
+			i++;	
+			continue;
+		}
+	//si no es cabecera ni fin asignarle a una variable.
+		if(frase !="ENDOFARTICLE." && frase !="</doc>"){
+			textInFile[i] = textInFile[i] + frase;
+			continue;		
+		}
+	}
 
 //----------------------------------------------------------------
 	ofstream archivo;
-	archivo.open("raw.txt",ios::out);//abriendo el archivo
+	archivo.open("raw.txt");//abriendo el archivo
 	if(archivo.fail()){
 		cout<<"no se pudo abrir el archivo";
 		exit(1);
 	}
  //___________________________________________________________
-int posinit,posend,posid,postittle,posnfil,posproce,posdbindex;
-int a=i;
-for (int i = 0; i < a; ++i)
- {
- 	string sstart,ssend,ssid,ssttitle,ssnfil,ssprocesed,ssdbindex,mensaje;
- 	sstart='<doc',ssend='">',ssid='id=',ssttitle='title=',
- 	ssnfil='nonfiltered=',ssprocesed='=',ssdbindex='dbindex=';
+	int posinit,posend,posid,postittle,posnfil,posproce,posdbindex;
+	int a=i;
+	
+	for (int i = 0; i < a; ++i)
+	{
+		string sstart,ssend,ssid,ssttitle,ssnfil,ssprocesed,ssdbindex,mensaje;
+		sstart='<doc',ssend='">',ssid='id=',ssttitle='title=',
+		ssnfil='nonfiltered=',ssprocesed='=',ssdbindex='dbindex=';
 
- 	//textInFile[i]=DelCharIndeseados(Lower(textInFile[i]));
+		posinit=textInFile[i].find(sstart);
 
- 	posinit=textInFile[i].find(sstart);
-
- 	posid=textInFile[i].find(ssid,posinit);
+		posid=textInFile[i].find(ssid,posinit);
  		ssid=recorrer(textInFile[i],posid+2);
 
- 	postittle=textInFile[i].find(ssttitle,posid+2);
- 		ssttitle=recorrer(textInFile[i],postittle+2);	
+		postittle=textInFile[i].find(ssttitle,posid+2);
+		ssttitle=recorrer(textInFile[i],postittle+2);	
 
- 	posnfil=textInFile[i].find(ssnfil,postittle+2);
- 		ssnfil=recorrer(textInFile[i],posnfil+2);
+		posnfil=textInFile[i].find(ssnfil,postittle+2);
+		ssnfil=recorrer(textInFile[i],posnfil+2);
 
- 	posproce=textInFile[i].find(ssprocesed,posnfil+2);
- 		ssprocesed=recorrer(textInFile[i],posproce+2);
+		posproce=textInFile[i].find(ssprocesed,posnfil+2);
+		ssprocesed=recorrer(textInFile[i],posproce+2);
 
- 	posdbindex=textInFile[i].find(ssdbindex,posproce+2);
- 		ssdbindex=recorrer(textInFile[i],posdbindex+2);	
+		posdbindex=textInFile[i].find(ssdbindex,posproce+2);
+		ssdbindex=recorrer(textInFile[i],posdbindex+2);	
 
- 	//textInFile[i]=DelCharIndeseados(Lower(textInFile[i]));
+		posend=textInFile[i].find(ssend);
 
- 	posend=textInFile[i].find(ssend);
+		//mensaje="|"+DelCharIndeseados(Lower(ssid))+"|"+DelCharIndeseados(Lower(ssttitle))+"|"+
+		//DelCharIndeseados(Lower(ssnfil))+"|"+DelCharIndeseados(Lower(ssdbindex))+"|"+
+		//DelCharIndeseados(Lower(textInFile[i].substr(posend+1)))+"\n";
 
- 	mensaje="|"+DelCharIndeseados(Lower(ssid))+"|"+DelCharIndeseados(Lower(ssttitle))+"|"+
- 	DelCharIndeseados(Lower(ssnfil))+"|"+DelCharIndeseados(Lower(ssdbindex))+"|"+
- 	DelCharIndeseados(Lower(textInFile[i].substr(posend+1)))+"\n";
+		mensaje = "|" + DelCharIndeseados(Lower(ssdbindex))+
+				  "|" + DelCharIndeseados(Lower(ssttitle)) +
+				  "|" + DelCharIndeseados(Lower(textInFile[i].substr(posend+1)));
+		archivo << mensaje+"\n";
+	}
 	
-	//archivo<<"</doc>\n";	
-
- 	archivo<<mensaje;
-
- 	//archivo<<"ENDOFARTICLE.\n";
-
- 	//cout << "mensaje "<<mensaje<< endl;
- 	/*
- 	cout << "pos3 "<<posid<< endl;	
- 	cout << "pos4 "<<postittle<< endl;
- 	cout << "pos5 "<<posnfil<< endl;
- 	cout << "pos6 "<<posdbindex<< endl;
- 	cout << "posens "<<posend<< endl;
- 	system("PAUSE()"); */
- }
 	archivo.close();
 //---------------------------------------------------------------- 
 
- //Lectura de data
- for (int i = 0; i < 1000; ++i)
- {
- 	//textInFile[i]=DelCharIndeseados(Lower(textInFile[i]));
- 	//cout << textInFile[i] << endl;	
- }
-
- ficheroEntrada.close();
- return 0;
+	ficheroEntrada.close();
+	
+	return 0;
 }
