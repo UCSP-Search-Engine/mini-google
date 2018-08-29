@@ -33,7 +33,7 @@ Instalar el framework de Python necesario para ejecutar la aplicacion web.
 Instalar Flask:
 
 ```
-sudo easy_install flask
+sudo easy_install Flask
 ```
 Ejecutar el archivo **app.py** de la carpeta:
 
