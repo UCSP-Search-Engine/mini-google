@@ -6,10 +6,50 @@
 body{
 	font-family: 'Actor';
 }
+
 .nav-div{
-	width: 100px;
+	width: 900px;
+}
+.container{
+	width: 900px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.query-div{
+	margin-top: 120px;
+	width: 200px;
+	float: left;
+}
+.main-div{
+	margin-top: 20px;
+	width: 900px;
 }
 
-.main-div{
-	width: 600px;
+.main-title{
+	font-size: 60px;
+	float: left;
+}
+
+.query-input{
+	width: 150px;
+}
+
+.hidden{
+	display: none;
+}
+
+.text-blue{
+	color: #0057e7;
+}
+
+.text-red{
+	color: #d62d20;
+}
+
+.text-yellow{
+	color: #ffa700;
+}
+
+.text-green{
+	color: #008744;
 }
