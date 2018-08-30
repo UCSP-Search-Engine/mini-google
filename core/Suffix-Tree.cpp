@@ -436,7 +436,7 @@ class MiniGoogle
 private:
 	int cantTree; // Number of trees to use
 	vector<SuffixTree> trees; // Vector that store all the trees
-    map<int, string> documentTitles; // Map that stores index, titles.
+    //map<int, string> documentTitles; // Map that stores index, titles.
     int idTree;
 
 public:
@@ -456,7 +456,7 @@ public:
 	{
 		trees[posTree].execution(title, dbindex);
 		trees[posTree].execution(content, dbindex);
-        documentTitles[dbindex] = title;
+        //documentTitles[dbindex] = title;
 	}
 
     void putDocument(int id, int dbindex, string title, string content)
@@ -529,7 +529,7 @@ public:
 		cout << endl;
 	}
 
-	void printResult(map<int, int> result, string texto, vector<string> resultTitles)
+	void printResult(map<int, int> result, string texto)//, vector<string> resultTitles)
 	{
 		cout << "\n\n================================ Resultado de busqueda ("<< texto << ")================================\n" << endl;
 		if(result.size()==0)
@@ -540,7 +540,8 @@ public:
 		{
 			//std::cout <<"dbIndex: "<< it->first << " \t titulo: " << resultTitles[i] << "\t coincidencias: " << it->second << "\n";
 			printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->first, it->second);
-			cout<<"titulo: " << resultTitles[i]<<endl;
+			cout<<endl;
+			//cout<<"titulo: " << resultTitles[i]<<endl;
             i++;
 		}
 	}
@@ -553,13 +554,14 @@ public:
         map<int, int> result = search(texto);
         vector<string> resultTitles;
 
-        for (map<int, int>::const_iterator it = result.begin(); it != result.end(); ++it)
-		{
+        printResult(result, texto);
+        //for (map<int, int>::const_iterator it = result.begin(); it != result.end(); ++it)
+		//{
             
-            resultTitles.push_back(documentTitles[it->first] );
-        }
+        //    resultTitles.push_back(documentTitles[it->first] );
+        //}
 
-        printResult(result, texto, resultTitles);
+        //printResult(result, texto, resultTitles);
     }
 
 
@@ -619,12 +621,18 @@ int main()
     //--------------Lectura de data------------------------
     string frase;
     int i=0;
-    vector <string> contenido(999999);
-    vector <int> id(999999);
-    vector <int> dbindex(999999);
-    vector <string> title(999999);
-    vector <string> nonfiltered(999999);
-    vector <string> textInFile(999999);
+    //vector <string> contenido(999999);
+    //vector <int> id(999999);
+    //vector <int> dbindex(999999);
+    //vector <string> title(999999);
+    //vector <string> nonfiltered(999999);
+    //vector <string> textInFile(999999);
+
+    string textInFile;
+    int dbindex;
+    string title;
+    string contenido;
+
     int posend,posid,postittle,posnfil,posdbindex;
     string ssid,ssttitle,ssnfil,ssdbindex,sscontenido;
 
@@ -632,8 +640,8 @@ int main()
     ficheroEntrada.open ("parse/raw.txt");
     if (ficheroEntrada.is_open())
     { 
-        cout << "Lectura correcta" << endl;
-
+        cout << "Lectura correcta\n" << endl;
+        cout << "================\n\n" << endl;
 
         while(!ficheroEntrada.eof())
         {  
@@ -647,6 +655,20 @@ int main()
             //    break;
             //}
             //si no es cabecera ni fin asignarle  variables.
+
+            textInFile 		= textInFile + frase;
+            string sstart 	="|";
+            
+            posdbindex 		= textInFile.find(sstart);
+			dbindex 		= stoi(recorrer(textInFile,posdbindex));
+            
+            postittle   	= textInFile.find(sstart,posdbindex+1);
+            title 			= recorrer(textInFile,postittle);
+
+            posend		 	= textInFile.find(sstart,postittle+1);
+            contenido	= textInFile.substr(posend);
+
+            /*	
             textInFile[i] = textInFile[i] + frase;
             string sstart="|";
 		        
@@ -658,16 +680,22 @@ int main()
 
 		    posend          =   textInFile[i].find(sstart,postittle+1);
 		    contenido[i]    =   textInFile[i].substr(posend);
-
+			
+			*/
                 // system("PAUSE()");
                 //EJECUCIOON DE SUFIX TREE
                 // SuffixTree *tree = new SuffixTree(textInFile[i]);
                 //tree->execution();    
                 //tree->print();
             //mg->putDocument(id[i], dbindex[i], title[i], contenido[i]);
-            mg->putDocument(0, dbindex[i], title[i], contenido[i]);
-            i++;  
-           	printf("\ri = %6d", i);
+            //mg->putDocument(0, dbindex[i], title[i], contenido[i]);
+
+            //cout<<"|"<<dbindex<<"|"<<title<<"|"<<endl;
+            mg->putDocument(0, dbindex, title, contenido);
+            textInFile = "";
+            i++;
+
+            printf("\rSuffix-Tree <- %3.2f\%", 100*(float)i/400000.0);
         }
     }
     else
