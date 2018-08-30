@@ -627,7 +627,7 @@ int main()
     string ssid,ssttitle,ssnfil,ssdbindex,sscontenido;
 
     ifstream ficheroEntrada;
-    ficheroEntrada.open ("raw.txt");
+    ficheroEntrada.open ("parse/raw.txt");
     if (ficheroEntrada.is_open())
     { 
         cout << "Lectura correcta" << endl;
@@ -637,56 +637,35 @@ int main()
         {  
             //READ
             getline(ficheroEntrada, frase);
-            if(frase =="</doc>")
-            {
-                continue;
-            }
-            if(frase =="ENDOFARTICLE.")
-            {
-                i++;    
-                continue;
-            }
+            if(frase.length() == 0)
+            	continue;
 
             //======================Number of text to read============================================
-            if(i > 40)
+            if(i > 40){
                 break;
-
+            }
             //si no es cabecera ni fin asignarle  variables.
-            if(frase !="ENDOFARTICLE." && frase !="</doc>")
-            {
-                //buscar posiciones y dividir campos
-                textInFile[i] = textInFile[i] + frase;
-                string sstart="|";
+            textInFile[i] = textInFile[i] + frase;
+            string sstart="|";
+		        
+		    posdbindex      =   textInFile[i].find(sstart);
+		    dbindex[i]      =   stoi(recorrer(textInFile[i],posdbindex));
 
-                posid=textInFile[i].find(sstart);
-                // ssid=recorrer(textInFile[i],posid);
-                id[i]=stoi(recorrer(textInFile[i],posid));
+		    postittle       =   textInFile[i].find(sstart,posdbindex+1);
+		    title[i]        =   recorrer(textInFile[i],postittle);
 
-                postittle=textInFile[i].find(sstart,posid+1);
-                //ssttitle=recorrer(textInFile[i],postittle);   
-                title[i]=recorrer(textInFile[i],postittle);  
+		    posend          =   textInFile[i].find(sstart,postittle+1);
+		    contenido[i]    =   textInFile[i].substr(posend);
 
-                posnfil=textInFile[i].find(sstart,postittle+1);
-                //ssnfil=recorrer(textInFile[i],posnfil);
-                nonfiltered[i]=recorrer(textInFile[i],posnfil);
-
-                posdbindex=textInFile[i].find(sstart,posnfil+1);
-                //ssdbindex=recorrer(textInFile[i],posdbindex); 
-                dbindex[i]=stoi(recorrer(textInFile[i],posdbindex)); 
-
-                posend=textInFile[i].find(sstart,posdbindex+1);
-                //sscontenido=textInFile[i].substr(posend+1);
-                contenido[i]=textInFile[i].substr(posend+1);
-
-                //cout<<i<<" mensaje: "<<id[i]<<"||"<<title[i]<<"||"<<nonfiltered[i]<<"||"<<dbindex[i]<<"||"<<contenido[i]<<endl;
                 // system("PAUSE()");
                 //EJECUCIOON DE SUFIX TREE
                 // SuffixTree *tree = new SuffixTree(textInFile[i]);
                 //tree->execution();    
                 //tree->print();
-                mg->putDocument(id[i], dbindex[i], title[i], contenido[i]);
-                continue;       
-            }
+            //mg->putDocument(id[i], dbindex[i], title[i], contenido[i]);
+            mg->putDocument(0, dbindex[i], title[i], contenido[i]);
+            i++;  
+
         }
     }
     else
@@ -696,7 +675,7 @@ int main()
     ficheroEntrada.close();
     
     cout<<"Busqueda"<<endl;
-    mg->find("conte");
+    mg->find("a");
     cout<<"FIN"<<endl;
     
     //system("pause"); 
