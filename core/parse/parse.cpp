@@ -89,35 +89,48 @@ int main () {
 
 	setlocale(LC_ALL, "spanish");	
 	setlocale(LC_CTYPE, "Spanish");
-	string url; 
-
+	 
+	string url;
+	int cont=10000;
 //-------------------lectura de data 
 	string frase;
 	int i=0;
 	vector <string> textInFile(999999);
 	ifstream ficheroEntrada;
 
-	ficheroEntrada.open ("../../raw.es/spanishText_10000_15000");
-	while(!ficheroEntrada.eof()){  
+	for(int k = 0;cont < 400000;k++){
 
-		getline(ficheroEntrada, frase);
-		if(frase =="</doc>"){	
+		//ficheroEntrada.open ("../../raw.es/spanishText_10000_15000");
+		url="../../raw.es/spanishText_"+to_string(cont)+'_'+to_string(cont+5000);
+		cout<<"["<<k<<"] "<<" url: "<<url<<endl;
+		cont=cont+5000;
+
+		ficheroEntrada.open (url);
+		if(ficheroEntrada.fail()){
+			cout<<"no se pudo abrir el archivo"<<endl;
 			continue;
 		}
-		if(frase =="ENDOFARTICLE."){
-			i++;	
-			continue;
+		while(!ficheroEntrada.eof()){  
+
+			getline(ficheroEntrada, frase);
+			if(frase =="</doc>"){	
+				continue;
+			}
+			if(frase =="ENDOFARTICLE."){
+				i++;	
+				continue;
+			}
+		//si no es cabecera ni fin asignarle a una variable.
+			if(frase !="ENDOFARTICLE." && frase !="</doc>"){
+				textInFile[i] = textInFile[i] + frase;
+				continue;		
+			}
 		}
-	//si no es cabecera ni fin asignarle a una variable.
-		if(frase !="ENDOFARTICLE." && frase !="</doc>"){
-			textInFile[i] = textInFile[i] + frase;
-			continue;		
-		}
+	ficheroEntrada.close();
 	}
-
 //----------------------------------------------------------------
 	ofstream archivo;
-	archivo.open("raw.txt");//abriendo el archivo
+	archivo.open("raw.txt", ios::out);//abriendo el archivo
 	if(archivo.fail()){
 		cout<<"no se pudo abrir el archivo";
 		exit(1);
@@ -159,6 +172,7 @@ int main () {
 				  "|" + DelCharIndeseados(Lower(ssttitle)) +
 				  "|" + DelCharIndeseados(Lower(textInFile[i].substr(posend+1)));
 		archivo << mensaje+"\n";
+		printf("\rParcing <- %3.1f", 100*(float)i/((float)a));
 	}
 	
 	archivo.close();

@@ -507,7 +507,7 @@ public:
 			Node *node = trees[i].search2(suffix, parteCoinciden, edgePos);
 
 			
-			cout << "suff:" << suffix << " coicide:" << parteCoinciden << endl;
+			//cout << "suff:" << suffix << " coicide:" << parteCoinciden << endl;
 
             if (edgePos != -1 && suffix.size()==0)
 			{
@@ -531,14 +531,16 @@ public:
 
 	void printResult(map<int, int> result, string texto, vector<string> resultTitles)
 	{
-		cout << "================================ Resultado de busqueda ("<< texto << ")================================" << endl;
+		cout << "\n\n================================ Resultado de busqueda ("<< texto << ")================================\n" << endl;
 		if(result.size()==0)
-                    cout << "No hay coicidencia" << endl;
+            cout << "No hay coicidencia" << endl;
 
         int i=0;
 		for (map<int, int>::const_iterator it = result.begin(); it != result.end(); ++it)
 		{
-			std::cout <<"dbIndex: "<< it->first << " \t titulo: " << resultTitles[i] << "\t coincidencias: " << it->second << "\n";
+			//std::cout <<"dbIndex: "<< it->first << " \t titulo: " << resultTitles[i] << "\t coincidencias: " << it->second << "\n";
+			printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->first, it->second);
+			cout<<"titulo: " << resultTitles[i]<<endl;
             i++;
 		}
 	}
@@ -641,9 +643,9 @@ int main()
             	continue;
 
             //======================Number of text to read============================================
-            if(i > 40){
-                break;
-            }
+            //if(i > 40){
+            //    break;
+            //}
             //si no es cabecera ni fin asignarle  variables.
             textInFile[i] = textInFile[i] + frase;
             string sstart="|";
@@ -665,7 +667,7 @@ int main()
             //mg->putDocument(id[i], dbindex[i], title[i], contenido[i]);
             mg->putDocument(0, dbindex[i], title[i], contenido[i]);
             i++;  
-
+           	printf("\ri = %6d", i);
         }
     }
     else
@@ -674,9 +676,17 @@ int main()
     }
     ficheroEntrada.close();
     
-    cout<<"Busqueda"<<endl;
-    mg->find("a");
-    cout<<"FIN"<<endl;
+    cout<<"\n\nBusqueda:\n"<<endl;
+    cout<<"=========\n"<<endl;
+    string word;
+
+    while (true){
+	    cout<<"Query: ";
+	    cin>>word;
+	    mg->find(word);
+	    cout<<"\n================================ Resultado de busqueda ("<< word << ")================================\n"<<endl;   	
+    }
+
     
     //system("pause"); 
 
