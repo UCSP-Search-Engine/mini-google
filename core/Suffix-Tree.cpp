@@ -487,8 +487,8 @@ public:
 		}
 		cout << endl;
 	}
-	/*
-	void printResult(map<int, int> result, string texto, vector<string> resultTitles)
+
+	void printResult2(map<int, int> result, string texto)
 	{
 		cout << "\n\n================================ Resultado de busqueda ("<< texto << ")================================\n" << endl;
 		if(result.size()==0)
@@ -497,13 +497,12 @@ public:
         int i=0;
 		std::multimap<int,int>::reverse_iterator it;
 		for (it=result.rbegin(); it!=result.rend(); ++it){
-			printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->first, it->second);
-			cout<<"titulo: " << resultTitles[i]<<endl;
+			printf("[%2d] dbIndex: %8d | cnds: %8d \n", i+1, it->first, it->second);
+			//cout<<"titulo: " << resultTitles[i]<<endl;
 			i++;
 		}
 	}
 
-	*/
 	void printResult(multimap<int,int> result, string texto)//, vector<string> resultTitles)
 	{
 		cout << "================================ Resultado de busqueda ("<< texto << ")================================" << endl;
@@ -588,7 +587,8 @@ public:
 				}
 
 			}
-
+			printResult2(result, text);
+			/*
 			multimap<int,int> multimap = invertMap(result);
 			vector<string> resultTitles;	
 
@@ -600,7 +600,8 @@ public:
 				resultTitles.push_back(documentTitles[rit->second]);
 			}
 
-			printResult(multimap, text);		
+			printResult(multimap, text);
+			*/		
 		}
 		else{
 
