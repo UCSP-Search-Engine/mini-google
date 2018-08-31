@@ -9,8 +9,8 @@
 #include "tools.hpp"
 
 using namespace std;
-char enie;
 
+/*
 bool esdeseado(char letra){
 	bool bandera=false;
 	enie=(char)(-15);//asigno la ñ
@@ -23,15 +23,15 @@ bool esdeseado(char letra){
 
     for (int j = 0; j < longitud; j++){
             if (letra == Caracteresdeseados[j]){
-            		bandera=true;
-            		continue;
+            	bandera=true;
+            	continue;
             		//cout << j << endl;
             		//system("PAUSE()"); 
             } 
         }
     return	bandera;		
 }
-
+*/
 string DelCharIndeseados(string s){
     int Switch;
     string resultado="";
@@ -178,7 +178,8 @@ int main (){
 
 		mensaje = "|" + DelCharIndeseados(Lower(ssdbindex))+
 				  "|" + DelCharIndeseados(Lower(ssttitle)) +
-				  "|" + DelCharIndeseados(Lower(textInFile[i].substr(posend+1)))+
+				  //"|" + DelCharIndeseados(Lower(textInFile[i].substr(posend+1)))+
+				  "|" + DelMin(Lower(textInFile[i].substr(posend+1)))+
 				  "|";
 		
 		archivo << mensaje+"\n";

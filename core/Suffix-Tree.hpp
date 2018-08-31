@@ -6,6 +6,7 @@
 #include <set>
 #include <functional>
 #include "parse/tools.hpp"
+#include <omp.h>
 
 using namespace std;
 
@@ -112,7 +113,8 @@ public:
 	vector<string> getSuffix(string word)
 	{
 		vector<string> suffix;
-
+		suffix.push_back(word);
+		return suffix;
 		int i = word.size() - 1;
 
 		for (; i >= 0; i--)
@@ -147,13 +149,14 @@ class SuffixTree
 		Word w;
 		vector<string> words = w.getWords(text);
 		int i = 0;
+
 		for (; i<words.size(); i++)
 		{
 			//cout<<"----------------"<<endl;
 			//cout<<"-"<<words[i].word<<"-"<<words[i].index<<"-"<<endl;
 
 			vector<string> suffix = w.getSuffix(words[i]);
-
+			
 			for (int j = 0; j<suffix.size(); j++)
 			{
 				//cout<<"-"<<suffix[j].word<<"-"<<suffix[j].index<<"-"<<endl;
@@ -421,8 +424,14 @@ public:
 
 	void buscarIndicesHojas(Edge edge, map<int, int> &result)
 	{
+		if (result.size() > 20){
+		   	return;
+		}
 		if (edge.endNode == NULL)//Significa q llego a una arista hoja
-		{
+		{		
+
+
+#			pragma omp parallel for
 			for (int j = 0; j < edge.indexes.size(); j++)
 			{
                 if (result.find(edge.indexes[j]) != result.end()) //si lo contiene
@@ -437,6 +446,9 @@ public:
 		}
 		else
 		{
+			//if (result.size() > 10000){
+			//   	return;
+			//}
 			for (int j = 0; j < edge.endNode->edges.size(); j++)
 			{
 				buscarIndicesHojas(edge.endNode->edges[j], result);
@@ -530,6 +542,7 @@ public:
 				exit(1);
 			}
 			*/
+			printf ("================================= (%d results) ====================================\n", result.size());
 			for (it=result.rbegin(); it!=result.rend(); ++it){
 				printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->first, it->second);
 				cout<<"titulo : "<< documentTitles[it->first]<<endl;
@@ -846,9 +859,9 @@ void MakeSuffixTree(MiniGoogle *mg){
             	continue;
 
             //======================Number of text to read============================================
-            if(i > 1000){
-                break;
-            }
+            //if(i > 1000){
+            //    break;
+            //}
             //si no es cabecera ni fin asignarle  variables.
 
             textInFile 		= textInFile + frase;
@@ -868,8 +881,10 @@ void MakeSuffixTree(MiniGoogle *mg){
 
             textInFile = "";
             i++;
-
-            printf("\r\tSuffix-Tree <- %3.2f %%", 100*(float)i/259409.0);
+            if (i%10==0){
+            	printf("\r\tSuffix-Tree <- %3.2f %%", 100*(float)i/259409.0);
+            }
+            
         }
     }
     else

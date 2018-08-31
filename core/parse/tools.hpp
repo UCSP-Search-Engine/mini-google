@@ -3,9 +3,11 @@
 
 using namespace std;
 
+char enie;int cont_temp;string temp ="";
+
 bool esdeseado(char letra){
 	bool bandera=false;
-	char enie=(char)(-15);//asigno la ñ
+	//char enie=(char)(-15);//asigno la ñ
     const char Caracteresdeseados[] = { 
     'a','b','c','d','e','f','g','h','i','j',
     'k','l','m','n','o','p','q','r','s','t',
@@ -24,8 +26,7 @@ bool esdeseado(char letra){
     return	bandera;		
 }
 
-
-string Lower(string s){
+string Lower2(string s){
 	int len=s.length();
 	string result;
 	char currentChar;
@@ -63,12 +64,71 @@ string Lower(string s){
 	return result;
 }
 
+string Lower(string s){
+	int len=s.length();
+	//cout<<'ñ'<<" - "<<'ó'<<endl;
+	for (int i = 0; i < len; ++i)
+	{
+		//TOlower
+		//cout << (char)-15 << s[i] <<(int)s[i] << endl;
+        //	system("PAUSE()"); 
+		if(s[i]>='A' && s[i] <='Z'){
+			s[i]=(s[i] + 32);
+		}
+		//Quitar tildes
+		//cout << (int)s[i]<< endl;system("PAUSE()");
+		if( (int)s[i] == -31 or (int)s[i]== -63) s[i] = 'a'; 
+		if(	(int)s[i] == -55 or (int)s[i]== -23) s[i] = 'e'; 
+		if( (int)s[i] == -19 or (int)s[i]== -51) s[i] = 'i'; 
+		if( (int)s[i] == -13 or (int)s[i]== -45 ) s[i] = 'o'; 
+		if( (int)s[i] == -38 or (int)s[i]== -6 ) s[i] = 'u'; 
+		//if( (int)s[i] == -15) s[i] = 'n'; 
+		//system("PAUSE()");
+		if(s[i] == '\n'){ s[i] = ' ';};
+	}
+
+	return s;
+}
+
+string quitar_min(char letra){	
+	string s;
+	//cout << "cont "<<cont_temp<< endl;
+	if(cont_temp>3 and letra==' '){
+		s=temp+" ";
+		temp="";
+		cont_temp=0;
+		return	s;
+	}	
+
+	if(letra==' '){
+		cont_temp=0;
+		temp="";
+	}else{
+		cont_temp=cont_temp+1;
+		temp=temp+letra;
+	}	
+	if(cont_temp<=3){
+		s= "";
+		return	s;
+	}
+}
 
 
-
-
-
-
+string DelMin(string s){
+    string resultado="";
+    int longitud=s.length();	
+    for (int i = 0; i < longitud; i++){
+    	if(esdeseado(s[i]) and (int)s[i]!=(int)')'){
+    		resultado=resultado+quitar_min(s[i]); 							
+    	}
+    	else{
+    		resultado = "\0";
+    	}  	
+    }
+    //cout << " - "<<resultado << endl;
+    //system("PAUSE()"); 	
+    return resultado;
+}
 
 
 
