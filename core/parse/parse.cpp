@@ -98,17 +98,20 @@ int main () {
 	vector <string> textInFile(999999);
 	ifstream ficheroEntrada;
 
-	for(int k = 0;cont < 400000;k++){
+	for(int k = 0;cont < 500000;k++){
 
 		//ficheroEntrada.open ("../../raw.es/spanishText_10000_15000");
 		url="../../raw.es/spanishText_"+to_string(cont)+'_'+to_string(cont+5000);
-		cout<<"["<<k<<"] "<<" url: "<<url<<endl;
+		//cout<<"["<<k<<"] "<<" url: "<<url<<endl;
 		cont=cont+5000;
 
 		ficheroEntrada.open (url);
 		if(ficheroEntrada.fail()){
-			cout<<"no se pudo abrir el archivo"<<endl;
+			//cout<<"no se pudo abrir el archivo"<<endl;
+			cout<<"["<<k<<"] "<<" url: "<<url<<" <- Not Found!"<<endl;
 			continue;
+		} else {
+			cout<<"["<<k<<"] "<<" url: "<<url<<endl;
 		}
 		while(!ficheroEntrada.eof()){  
 
@@ -170,7 +173,8 @@ int main () {
 
 		mensaje = "|" + DelCharIndeseados(Lower(ssdbindex))+
 				  "|" + DelCharIndeseados(Lower(ssttitle)) +
-				  "|" + DelCharIndeseados(Lower(textInFile[i].substr(posend+1)));
+				  "|" + DelCharIndeseados(Lower(textInFile[i].substr(posend+1)))+
+				  "|";
 		archivo << mensaje+"\n";
 		printf("\rParcing <- %3.1f", 100*(float)i/((float)a));
 	}

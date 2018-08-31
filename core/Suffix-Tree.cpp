@@ -1,9 +1,13 @@
-#include<iostream>
+#include <iostream>
 #include <map>
-#include<vector>
-#include<string>
+#include <vector>
+#include <string>
 #include <fstream>
+#include <set>
+#include <functional>
 using namespace std;
+
+
 
 
 class Edge;
@@ -78,43 +82,6 @@ public:
 		this->index = index;
 	}
 
-	//For printing
-	string toString()
-	{
-		return (word + " " + to_string(index));
-	}
-
-	//Getting the words. Each word has their index according its position in the text.
-	/*vector<Word> getWords(string text)
-	{
-		vector<Word> words;
-
-		int posSpace;
-		string word;
-		int wordStartPos = 0;
-
-		while (text.size() >= 1)
-		{
-			posSpace = text.find(" ");
-
-			if (posSpace == -1)
-			{
-				words.push_back(Word(text, wordStartPos));
-				break;
-			}
-
-			word = text.substr(0, posSpace);
-
-			if (word.size() > 0)
-				words.push_back(Word(word, wordStartPos));
-
-			text = text.substr(posSpace + 1);
-
-			wordStartPos += posSpace + 1;
-		}
-		return words;
-	}*/
-
 	vector<string> getWords(string text)
 	{
 		vector<string> words;
@@ -143,19 +110,6 @@ public:
 	}
 
 	//Getting the word suffixes and set up their indexes.
-	/*vector<Word> getSuffix(string word, int index)
-	{
-		vector<Word> suffix;
-
-		int i = word.size() - 1;
-
-		for (; i >= 0; i--)
-		{
-			suffix.push_back(Word(word.substr(i), index + i));
-		}
-		return suffix;
-	}*/
-
 	vector<string> getSuffix(string word)
 	{
 		vector<string> suffix;
@@ -175,17 +129,17 @@ public:
 
 class SuffixTree
 {
-private:
-	Node *root;
+	private:
+		Node *root;
 
-public:
-	SuffixTree()
-	{
-		this->root = new Node();
-	}
+	public:
+		SuffixTree()
+		{
+			this->root = new Node();
+		}
 
 
-
+	//{{'a','b'}}
 	//Start point to add the words inside the tree. First we can read the text and separate each word, 
 	//after that for each word we can extract the suffix in order to add them in the tree. Also we must have
     //like parameter the index (dbindex) of the text.
@@ -286,13 +240,11 @@ public:
 		{
 			substring1 = suffix.substr(0, 1);
 			substring2 = node->edges[i].suffixString.substr(0, 1);
-
 			if (substring1 == substring2)
 			{
 				parteCoinciden += substring1;
 				suffix = suffix.substr(1);
 				edgePos = i;
-
 				int j = 0, k = 1;
 				for (; j<suffix.size() && k<node->edges[i].suffixString.size(); j++, k++)
 				{
@@ -311,6 +263,7 @@ public:
 				}
 				suffix = suffix.substr(j);
 
+				
 				if ((node->edges[i].endNode) != NULL && suffix.size()>0)
 				{
 					return search2(suffix, parteCoinciden, node->edges[i].endNode, edgePos);
@@ -326,9 +279,9 @@ public:
 
 	// Recursive search: it searches the text where a given word exists after the insertion of the data.
 	Node * search2(string &suffix, string &parteCoinciden, int &edgePos)
-	{
-            parteCoinciden = "";
-            return search2(suffix, parteCoinciden, root, edgePos);
+	{		
+        parteCoinciden = "";
+        return search2(suffix, parteCoinciden, root, edgePos);
 	}
 
 	// Function to add all the suffix in the tree.
@@ -340,13 +293,6 @@ public:
 		string parteCoinciden = "";
 		//The search give us inside suffix the remained part to add in the tree.
 		Node *node = search(suffix, parteCoinciden, edgePos);
-
-		//================================ START PRINTING =====================================
-		/*cout << "-----------edPos: " << edgePos << "\t NodeEdgesSize:";
-		if (node != NULL)
-			cout << node->edges.size();
-		cout << endl;*/
-		//==================================== END PRINTING ===================================
 
 		if (edgePos == -1) // If not exist the appropiate edge, we add a new element to the node.
 		{
@@ -383,6 +329,7 @@ public:
 			if (noCoinciden.size() == 0)
 			{
                 //if the suffix is from a different text (push_back)
+
                 if (node->edges[edgePos].indexes[node->edges[edgePos].indexes.size() - 1] != index)
                 {
 				    node->edges[edgePos].putOtherIndex(index);
@@ -395,7 +342,7 @@ public:
 		}
 
 
-		//print();
+		
 		//system("pause");
 	}
 
@@ -412,7 +359,7 @@ public:
 				indexs += "-" + to_string(node->edges[i].indexes[j]);
 			indexs += "-";
 
-			//cout << aux << "suffix: -" << node->edges[i].suffixString << "- \t indexs: " << indexs << endl;
+			cout << aux << "suffix: -" << node->edges[i].suffixString << "- \t indexs: " << indexs << endl;
 			if (node->edges[i].endNode != NULL)
 			{
 				print(node->edges[i].endNode, profundidad + 1);
@@ -423,7 +370,7 @@ public:
 	void print()
 	{
 		cout << "--------- Impresion del Arbol ---------" << endl;
-		print(root, 0);
+		print(root, 2);
 		cout << endl;
 	}
 
@@ -436,7 +383,8 @@ class MiniGoogle
 private:
 	int cantTree; // Number of trees to use
 	vector<SuffixTree> trees; // Vector that store all the trees
-    //map<int, string> documentTitles; // Map that stores index, titles.
+	//SuffixTree tress;
+    map<int, string> documentTitles; // Map that stores index, titles.
     int idTree;
 
 public:
@@ -456,7 +404,7 @@ public:
 	{
 		trees[posTree].execution(title, dbindex);
 		trees[posTree].execution(content, dbindex);
-        //documentTitles[dbindex] = title;
+       	documentTitles[dbindex] = title;
 	}
 
     void putDocument(int id, int dbindex, string title, string content)
@@ -465,6 +413,7 @@ public:
         idTree++;
         if(cantTree <= idTree)
             idTree = 0;
+        //print();
     }
 
 	void buscarIndicesHojas(Edge edge, map<int, int> &result)
@@ -476,7 +425,6 @@ public:
                 if (result.find(edge.indexes[j]) != result.end()) //si lo contiene
                 {
 				    result[edge.indexes[j]] = result.find(edge.indexes[j])->second + edge.coincidences[j];
-                    //result[edge.indexes[j]] = result[edge.indexes[j]] + edge.coincidences[j];
                 }
                 else
                 {
@@ -493,12 +441,23 @@ public:
 		}
 	}
 
+	template<typename K, typename V>
+	std::multimap<V,K> invertMap(std::map<K,V> const &map)
+	{
+		std::multimap<V,K> multimap;
+
+		for (auto const &pair: map) {
+			multimap.insert(std::make_pair(pair.second, pair.first));
+		}
+
+		return multimap;
+	}
+
     //Function to return a map with the keys and values; where the key is the index of the text and the value is the
     //coincidence number in the tree.
 	map<int, int> search(string texto)
 	{
 		map<int, int> result;//key, value
-
 		for (int i = 0; i < cantTree; i++)
 		{
 			int edgePos = -1;
@@ -528,40 +487,185 @@ public:
 		}
 		cout << endl;
 	}
-
-	void printResult(map<int, int> result, string texto)//, vector<string> resultTitles)
+	/*
+	void printResult(map<int, int> result, string texto, vector<string> resultTitles)
 	{
 		cout << "\n\n================================ Resultado de busqueda ("<< texto << ")================================\n" << endl;
 		if(result.size()==0)
             cout << "No hay coicidencia" << endl;
 
         int i=0;
-		for (map<int, int>::const_iterator it = result.begin(); it != result.end(); ++it)
-		{
-			//std::cout <<"dbIndex: "<< it->first << " \t titulo: " << resultTitles[i] << "\t coincidencias: " << it->second << "\n";
+		std::multimap<int,int>::reverse_iterator it;
+		for (it=result.rbegin(); it!=result.rend(); ++it){
 			printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->first, it->second);
-			cout<<endl;
-			//cout<<"titulo: " << resultTitles[i]<<endl;
+			cout<<"titulo: " << resultTitles[i]<<endl;
+			i++;
+		}
+	}
+
+	*/
+	void printResult(multimap<int,int> result, string texto)//, vector<string> resultTitles)
+	{
+		cout << "================================ Resultado de busqueda ("<< texto << ")================================" << endl;
+		if(result.size()==0)
+                    cout << "No hay coicidencia" << endl;
+
+        int i=0;
+		std::multimap<int,int>::reverse_iterator rit;
+		//for (auto const &pair: result) 
+		
+  		for (rit=result.rbegin(); rit!=result.rend(); ++rit)
+		{
+			//resultTitles.push_back(documentTitles[rit->second]);
+			std::cout <<"dbIndex: "<< rit->second << "\t coincidencias: " << rit->first << "\n";
+			//std::cout <<"dbIndex: "<< rit->second << " \t titulo: " << resultTitles[i] << "\t coincidencias: " << rit->first << "\n";
             i++;
 		}
 	}
 
-
     //Function that return a map with the text index and the number of the coincidence
-    bool find (string texto)
+    bool find (string text)
     {
-
+    	/*
         map<int, int> result = search(texto);
+
         vector<string> resultTitles;
 
         printResult(result, texto);
-        //for (map<int, int>::const_iterator it = result.begin(); it != result.end(); ++it)
-		//{
-            
-        //    resultTitles.push_back(documentTitles[it->first] );
-        //}
+        */
 
-        //printResult(result, texto, resultTitles);
+     	//New --------------------------------------------------------------->
+     	cout<<text<<endl;
+		Word word;
+		vector<string> words = word.getWords(text);
+		//vector<multimap<int,int>> mapsResults;
+		cout<<"size = "<<words.size()<<endl;
+		
+		if (words.size() == 1){
+			vector<map<int,int>> maps;
+			
+			for(string t: words)
+			{
+				maps.push_back(search(t));
+			}
+
+			int key, value; //key: dbindex, value: nro coincidences
+			map<int, int> result;
+
+			for(int i=0; i<maps.size(); i++)
+			{
+				for (map<int, int>::const_iterator it = maps[i].begin(); it != maps[i].end(); ++it)
+				{
+					vector<int> coincidences;
+					key = it->first;
+					value = it->second;
+					coincidences.push_back(value); //all the coincidences for the key.
+
+					map<int,int>::iterator itAux;
+					for(int k=i+1; k<maps.size(); k++)
+					{
+						itAux = (maps[k]).find(key);
+						
+						if (itAux != maps[k].end())//si existe
+						{
+							value = itAux->second;
+							coincidences.push_back(value);
+							maps[k].erase (itAux);
+						}
+						else
+						{
+							coincidences.push_back(0);
+						}
+					}
+					
+					int min = 1000000000;
+					for(int j=0; j<coincidences.size(); j++)
+					{
+						if(coincidences[j]<min)
+							min = coincidences[j];
+					}
+					result[key] = min;
+				}
+
+			}
+
+			multimap<int,int> multimap = invertMap(result);
+			vector<string> resultTitles;	
+
+
+			std::multimap<int,int>::reverse_iterator rit;
+	  		for (rit=multimap.rbegin(); rit!=multimap.rend(); ++rit)
+			{
+	    		//std::cout << rit->first << " => " << rit->second << '\n';
+				resultTitles.push_back(documentTitles[rit->second]);
+			}
+
+			printResult(multimap, text);		
+		}
+		else{
+
+		
+			vector<map<int,int>> maps;
+			
+			for(string t: words)
+			{
+				maps.push_back(search(t));
+			}
+
+			int key, value; //key: dbindex, value: nro coincidences
+			map<int, int> result;
+
+			for(int i=0; i<maps.size(); i++)
+			{
+				for (map<int, int>::const_iterator it = maps[i].begin(); it != maps[i].end(); ++it)
+				{
+					vector<int> coincidences;
+					key = it->first;
+					value = it->second;
+					coincidences.push_back(value); //all the coincidences for the key.
+
+					map<int,int>::iterator itAux;
+					for(int k=i+1; k<maps.size(); k++)
+					{
+						itAux = (maps[k]).find(key);
+						
+						if (itAux != maps[k].end())//si existe
+						{
+							value = itAux->second;
+							coincidences.push_back(value);
+							maps[k].erase (itAux);
+						}
+						else
+						{
+							coincidences.push_back(0);
+						}
+					}
+					
+					int min = 1000000000;
+					for(int j=0; j<coincidences.size(); j++)
+					{
+						if(coincidences[j]<min)
+							min = coincidences[j];
+					}
+					result[key] = min;
+				}
+
+			}
+
+			multimap<int,int> multimap = invertMap(result);
+			vector<string> resultTitles;	
+
+
+			std::multimap<int,int>::reverse_iterator rit;
+	  		for (rit=multimap.rbegin(); rit!=multimap.rend(); ++rit)
+			{
+	    		//std::cout << rit->first << " => " << rit->second << '\n';
+				resultTitles.push_back(documentTitles[rit->second]);
+			}
+
+			printResult(multimap, text);
+	     	//New <---------------------------------------------------------------
+     	}
     }
 
 
@@ -573,7 +677,7 @@ public:
 
 string recorrer(string s,int  pos){
     string resultado;
-   // cout<<"pos "<<pos<<endl;
+
     s=s.substr(pos+1);int i;
     for(i=1;i<s.length();i++){
         if(s[i] == '|'){
@@ -581,52 +685,20 @@ string recorrer(string s,int  pos){
         } 
     }   
     resultado=s.substr(0,i);
-    //cout<<"i "<<i<<endl;
-    //cout<<"resultado recorrer "<<resultado<<endl;
-    //system("PAUSE()");
+
     return resultado;
 }
 
 int main()
 {
-    /*
-    //string text = "HELLO WORLD";
-    string text = "HELLO HILO";
-    //string text = "HELLO LLOA";
-    //string text = "HELLO WORLD LLOA LLOAE";
-    //string text = "HELLO AE";
-    SuffixTree *tree = new SuffixTree();
-    tree->execution(text, 1);
 
-    tree->print();
-    cout << "hello" << endl;
-    system("pause");*/
-
-    MiniGoogle *mg = new MiniGoogle(10);
-    //mg->putDocument(0, 1, 3, "T3", "O");
-    //mg->putDocument(0, 1, 4, "T4", "O OA");
-
-    /*mg->putDocument(0, 1, 1, "T1", "HELLO LO");//En que arbol, id(nose usa), index, titulo, contenido
-    mg->putDocument(0, 1, 2, "T2", "HILO");
-    mg->putDocument(1, 1, 3, "T3", "HELLO LO");
-    mg->putDocument(1, 1, 4, "T4", "HELLO WORLD LLOA LLOAE");
-    mg->print();
-
-    
-    cout<<"Busqueda"<<endl;
-    //mg->find("Lo");
-    */
+    MiniGoogle *mg = new MiniGoogle(1);
 
     
     //--------------Lectura de data------------------------
     string frase;
     int i=0;
-    //vector <string> contenido(999999);
-    //vector <int> id(999999);
-    //vector <int> dbindex(999999);
-    //vector <string> title(999999);
-    //vector <string> nonfiltered(999999);
-    //vector <string> textInFile(999999);
+
 
     string textInFile;
     int dbindex;
@@ -651,9 +723,9 @@ int main()
             	continue;
 
             //======================Number of text to read============================================
-            //if(i > 40){
-            //    break;
-            //}
+            if(i > 10){
+                break;
+            }
             //si no es cabecera ni fin asignarle  variables.
 
             textInFile 		= textInFile + frase;
@@ -661,41 +733,20 @@ int main()
             
             posdbindex 		= textInFile.find(sstart);
 			dbindex 		= stoi(recorrer(textInFile,posdbindex));
-            
+
+
             postittle   	= textInFile.find(sstart,posdbindex+1);
             title 			= recorrer(textInFile,postittle);
 
             posend		 	= textInFile.find(sstart,postittle+1);
-            contenido	= textInFile.substr(posend);
+            contenido		= recorrer(textInFile,posend+1);
 
-            /*	
-            textInFile[i] = textInFile[i] + frase;
-            string sstart="|";
-		        
-		    posdbindex      =   textInFile[i].find(sstart);
-		    dbindex[i]      =   stoi(recorrer(textInFile[i],posdbindex));
-
-		    postittle       =   textInFile[i].find(sstart,posdbindex+1);
-		    title[i]        =   recorrer(textInFile[i],postittle);
-
-		    posend          =   textInFile[i].find(sstart,postittle+1);
-		    contenido[i]    =   textInFile[i].substr(posend);
-			
-			*/
-                // system("PAUSE()");
-                //EJECUCIOON DE SUFIX TREE
-                // SuffixTree *tree = new SuffixTree(textInFile[i]);
-                //tree->execution();    
-                //tree->print();
-            //mg->putDocument(id[i], dbindex[i], title[i], contenido[i]);
-            //mg->putDocument(0, dbindex[i], title[i], contenido[i]);
-
-            //cout<<"|"<<dbindex<<"|"<<title<<"|"<<endl;
             mg->putDocument(0, dbindex, title, contenido);
+
             textInFile = "";
             i++;
 
-            printf("\rSuffix-Tree <- %3.2f\%", 100*(float)i/400000.0);
+            printf("\rSuffix-Tree <- %3.2f %%", 100*(float)i/259409.0);
         }
     }
     else
@@ -707,14 +758,24 @@ int main()
     cout<<"\n\nBusqueda:\n"<<endl;
     cout<<"=========\n"<<endl;
     string word;
+    clock_t t;
+
 
     while (true){
 	    cout<<"Query: ";
-	    cin>>word;
+	    
+	    //cin>>word;
+	    getline(cin, word);
+	    t = clock();
 	    mg->find(word);
-	    cout<<"\n================================ Resultado de busqueda ("<< word << ")================================\n"<<endl;   	
-    }
 
+	    t = clock() - t;
+	    
+	    printf ("\n<======= (%.8f seconds)======\n",((float)t)/CLOCKS_PER_SEC);
+	    cout<<"\n================================ Resultado de busqueda ("<< word << ")================================\n"<<endl;
+	    printf ("It took me %d clicks (%f seconds).\n",t,((float)t)/CLOCKS_PER_SEC);   	
+    }
+	
     
     //system("pause"); 
 
