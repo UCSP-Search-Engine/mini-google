@@ -173,7 +173,7 @@ class SuffixTree
 	//This function search return the correct node where we can insert the word suffix.
 	//Also it returns the edge position where the suffix has a coincidence (if it is -1 there is not a coincidence).
 	//On the other side, it returns the coincidence string with respect to the position to insert.
-	Node * search(string &suffix, string &parteCoinciden, Node *node, int &edgePos)
+	Node * search(string &suffix, string &parteCoinciden, Node *node, int &edgePos, int index)
 	{
 		edgePos = -1;
 		if (node->edges.size() == 0)
@@ -195,6 +195,7 @@ class SuffixTree
 				edgePos = i;
 
 				int j = 0, k = 1;
+
 				for (; j<suffix.size() && k<node->edges[i].suffixString.size(); j++, k++)
 				{
 					substring1 = suffix.substr(j, 1);
@@ -214,7 +215,7 @@ class SuffixTree
 
 				if ((node->edges[i].endNode) != NULL && suffix.size()>0)
 				{
-					return search(suffix, parteCoinciden, node->edges[i].endNode, edgePos);
+					return search(suffix, parteCoinciden, node->edges[i].endNode, edgePos, index);
 				}
 
 				return node;
@@ -226,9 +227,9 @@ class SuffixTree
 	}
 
 	// Recursive search: it searches the correct node from to root.
-	Node * search(string &suffix, string &parteCoinciden, int &edgePos)
+	Node * search(string &suffix, string &parteCoinciden, int &edgePos, int index)
 	{
-		return search(suffix, parteCoinciden, root, edgePos);
+		return search(suffix, parteCoinciden, root, edgePos, index);
 	}
 
 
@@ -297,7 +298,7 @@ class SuffixTree
 		int edgePos = -1; //Edge position
 		string parteCoinciden = "";
 		//The search give us inside suffix the remained part to add in the tree.
-		Node *node = search(suffix, parteCoinciden, edgePos);
+		Node *node = search(suffix, parteCoinciden, edgePos, index);
 
 		if (edgePos == -1) // If not exist the appropiate edge, we add a new element to the node.
 		{
@@ -331,6 +332,8 @@ class SuffixTree
 			}
 
 			//In case all the suffix coincide in the tree (we must not to add again).
+
+			/*
 			if (noCoinciden.size() == 0)
 			{
                 //if the suffix is from a different text (push_back)
@@ -344,6 +347,7 @@ class SuffixTree
                    	node->edges[edgePos].addCantCoicidencia();
                 }
 			}
+			*/
 		}
 
 
@@ -421,7 +425,38 @@ public:
             idTree = 0;
         //print();
     }
-
+   	void buscarIndicesHojas(Edge edge, map<int, int> &result)
+	{
+		//if (edge.endNode == NULL)//Significa q llego a una arista hoja
+		
+		cout<<edge.indexes.size()<<endl;
+		for (int j = 0; j < edge.indexes.size(); j++)
+		{
+				/*if (result.find(edge.indexes[j]) != result.end()) //si lo contiene
+				{
+					result[edge.indexes[j]] = result.find(edge.indexes[j])->second + edge.coincidences[j];
+				}
+				else
+				{
+					result[edge.indexes[j]] = edge.coincidences[j];
+				}*/
+				result[edge.indexes[j]] = edge.coincidences[j];
+				//map<int, int>::iterator it = result.find(edge.indexes[j]);
+				//if (it != result.end())
+				//	(*it).second = (*it).second + edge.coincidences[j];
+				//else
+				//	addresult[edge.indexes[j]] = edge.coincidences[j];
+		}
+		
+		/*else
+		{
+			for (int j = 0; j < edge.endNode->edges.size(); j++)
+			{
+				buscarIndicesHojas(edge.endNode->edges[j], result);
+			}
+		}*/
+	}
+    /*
 	void buscarIndicesHojas(Edge edge, map<int, int> &result)
 	{
 		if (result.size() > 20){
@@ -455,7 +490,7 @@ public:
 			}
 		}
 	}
-
+	*/
 	template<typename K, typename V>
 	std::multimap<V,K> invertMap(std::map<K,V> const &map)
 	{
@@ -467,6 +502,7 @@ public:
 
 		return multimap;
 	}
+	
 
     //Function to return a map with the keys and values; where the key is the index of the text and the value is the
     //coincidence number in the tree.
@@ -542,7 +578,7 @@ public:
 				exit(1);
 			}
 			*/
-			printf ("================================= (%d results) ====================================\n", result.size());
+			printf ("================================= (%d results) ====================================\n", (int)result.size());
 			for (it=result.rbegin(); it!=result.rend(); ++it){
 				printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->first, it->second);
 				cout<<"titulo : "<< documentTitles[it->first]<<endl;
