@@ -6,6 +6,7 @@
 #include <locale.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "tools.hpp"
 
 using namespace std;
 char enie;
@@ -43,6 +44,7 @@ string DelCharIndeseados(string s){
     return resultado;
 }
 
+/*
 string Lower(string s){
 	int len=s.length();
 	//cout<<'ñ'<<" - "<<'ó'<<endl;
@@ -68,7 +70,7 @@ string Lower(string s){
 
 	return s;
 }
-
+*/
 string recorrer(string s,int  pos){
 	string resultado;
 	//cout<<"pos recorrer"<<pos<<endl;
@@ -103,13 +105,16 @@ int main (){
 	for(int k = 0;cont < 485000;k++){
 		//ficheroEntrada.open ("../../raw.es/spanishText_10000_15000");
 		url="../../raw.es/spanishText_"+to_string(cont)+'_'+to_string(cont+5000);
-		cout<<"["<<k<<"] "<<" url: "<<url<<endl;
+		//cout<<"["<<k<<"] "<<" url: "<<url<<endl;
 		cont=cont+5000;
 
 		ficheroEntrada.open (url);		
 		if(ficheroEntrada.fail()){
-			cout<<"no se pudo abrir el archivo"<<endl;
+			cout<<"["<<k<<"] "<<" url: "<<url<<" <- Not Found!"<<endl;
+			//cout<<"no se pudo abrir el archivo"<<endl;
 			continue;
+		} else {
+			cout<<"["<<k<<"] "<<" url: "<<url<<endl;
 		}
 		while(!ficheroEntrada.eof()){  
 

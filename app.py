@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import os
 from flask import Flask
 from flask import request
@@ -23,7 +26,33 @@ def foo():
 		#x_files.write('{}'.format(query))
 		x_files.write(query_bin)
 		x_files.close()
-	return render_template('index.html')
+
+	APPFILE = 'core/toapp.txt'
+	FILENAME = os.path.join(THIS_FOLDER, APPFILE)
+	with open(FILENAME, 'r') as r_files:
+		content = []
+		while (len(content)==0):
+			content = r_files.readlines()
+		
+		r_files.close()
+	content = [x.strip() for x in content]
+
+	for ci in range(len(content)):
+		cont 		= content[ci]
+		cont_list 	= list(cont)
+		for i in range(len(cont_list)):
+			if (ord(cont_list[i]) == 241):
+				cont_list[i] = 'ni'
+				#cont_list[i] = 'ñ'
+				#print(ord(c))
+		cont = "".join(cont_list)
+		content[ci] = cont
+
+	for cont in content:
+		print cont
+	data = {}
+	data['titles'] = content
+	return render_template('index.html', result=data, ti=content)
 
 @app.route('/')
 def home():
