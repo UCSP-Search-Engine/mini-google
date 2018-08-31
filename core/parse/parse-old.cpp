@@ -101,7 +101,6 @@ int main (){
 	ifstream ficheroEntrada;
 
 	for(int k = 0;cont < 485000;k++){
-		//ficheroEntrada.open ("../../raw.es/spanishText_10000_15000");
 		url="../../raw.es/spanishText_"+to_string(cont)+'_'+to_string(cont+5000);
 		cout<<"["<<k<<"] "<<" url: "<<url<<endl;
 		cont=cont+5000;

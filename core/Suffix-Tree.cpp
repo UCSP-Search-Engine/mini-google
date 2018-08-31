@@ -5,10 +5,8 @@
 #include <fstream>
 #include <set>
 #include <functional>
+
 using namespace std;
-
-
-
 
 class Edge;
 
@@ -162,8 +160,9 @@ class SuffixTree
 				//print();
 				//return;
 			}
+			suffix.clear();
 		}
-		suffix.clear();
+		//
 		words.clear();
 	}
 
@@ -406,7 +405,8 @@ public:
 	{
 		trees[posTree].execution(title, dbindex);
 		trees[posTree].execution(content, dbindex);
-       	documentTitles[dbindex] = title;
+       	//documentTitles[dbindex] = title;
+       	documentTitles[dbindex] = '$';
 	}
 
     void putDocument(int id, int dbindex, string title, string content)
@@ -490,6 +490,23 @@ public:
 		cout << endl;
 	}
 
+	bool to20blocks(int &nblocks){
+		char conf;
+		if (nblocks%20==0){
+			cout<<"continuar?(y/n) ";
+			cin>>conf;
+
+			if ((conf == 'y') || (conf == 'Y')){
+				return true;
+			} else {
+				return false;
+			}
+		}
+		else {
+			return true;
+		}
+	};
+
 	void printResult2(map<int, int> result, string texto)
 	{
 		cout << "\n\n================================ Resultado de busqueda ("<< texto << ")================================\n" << endl;
@@ -497,12 +514,17 @@ public:
             cout << "No hay coicidencia" << endl;
 
         int i=0;
+
 		std::multimap<int,int>::reverse_iterator it;
 		for (it=result.rbegin(); it!=result.rend(); ++it){
-			printf("[%2d] dbIndex: %8d | cnds: %8d \n", i+1, it->first, it->second);
-			//cout<<"titulo: " << resultTitles[i]<<endl;
+			printf("[%2d] dbIndex: %8d | cnds: %8d \n", i+1, it->first, it->second);			
 			i++;
+			bool contin = to20blocks(i);
+			if (contin != true){
+				break;
+			}
 		}
+
 	}
 
 	void printResult(multimap<int,int> result, string texto)//, vector<string> resultTitles)
@@ -521,89 +543,28 @@ public:
 			std::cout <<"dbIndex: "<< rit->second << "\t coincidencias: " << rit->first << "\n";
 			//std::cout <<"dbIndex: "<< rit->second << " \t titulo: " << resultTitles[i] << "\t coincidencias: " << rit->first << "\n";
             i++;
+			bool contin = to20blocks(i);
+			if (contin != true){
+				break;
+			}
 		}
 	}
 
     //Function that return a map with the text index and the number of the coincidence
     bool find (string text)
     {
-    	/*
-        map<int, int> result = search(texto);
-
-        vector<string> resultTitles;
-
-        printResult(result, texto);
-        */
-
-     	//New --------------------------------------------------------------->
-     	cout<<text<<endl;
+		clock_t t;
+		t = clock();
 		Word word;
 		vector<string> words = word.getWords(text);
 		//vector<multimap<int,int>> mapsResults;
-		cout<<"size = "<<words.size()<<endl;
 		
 		if (words.size() == 1){
-			vector<map<int,int>> maps;
-			
-			for(string t: words)
-			{
-				maps.push_back(search(t));
-			}
-
-			int key, value; //key: dbindex, value: nro coincidences
-			map<int, int> result;
-
-			for(int i=0; i<maps.size(); i++)
-			{
-				for (map<int, int>::const_iterator it = maps[i].begin(); it != maps[i].end(); ++it)
-				{
-					vector<int> coincidences;
-					key = it->first;
-					value = it->second;
-					coincidences.push_back(value); //all the coincidences for the key.
-
-					map<int,int>::iterator itAux;
-					for(int k=i+1; k<maps.size(); k++)
-					{
-						itAux = (maps[k]).find(key);
-						
-						if (itAux != maps[k].end())//si existe
-						{
-							value = itAux->second;
-							coincidences.push_back(value);
-							maps[k].erase (itAux);
-						}
-						else
-						{
-							coincidences.push_back(0);
-						}
-					}
-					
-					int min = 1000000000;
-					for(int j=0; j<coincidences.size(); j++)
-					{
-						if(coincidences[j]<min)
-							min = coincidences[j];
-					}
-					result[key] = min;
-				}
-
-			}
+			map<int, int> result = search(text);
+			vector<string> resultTitles;
+			t = clock() - t;
+			printf ("================================= (%.8f seconds) ====================================\n",((float)t)/CLOCKS_PER_SEC);
 			printResult2(result, text);
-			/*
-			multimap<int,int> multimap = invertMap(result);
-			vector<string> resultTitles;	
-
-
-			std::multimap<int,int>::reverse_iterator rit;
-	  		for (rit=multimap.rbegin(); rit!=multimap.rend(); ++rit)
-			{
-	    		//std::cout << rit->first << " => " << rit->second << '\n';
-				resultTitles.push_back(documentTitles[rit->second]);
-			}
-
-			printResult(multimap, text);
-			*/		
 		}
 		else{
 
@@ -715,8 +676,8 @@ int main()
     ficheroEntrada.open ("parse/raw.txt");
     if (ficheroEntrada.is_open())
     { 
-        cout << "Lectura correcta\n" << endl;
-        cout << "================\n\n" << endl;
+        cout << "\nLectura correcta" << endl;
+        cout << "============================================================\n" << endl;
 
         while(!ficheroEntrada.eof())
         {  
@@ -726,9 +687,9 @@ int main()
             	continue;
 
             //======================Number of text to read============================================
-            //if(i > 10){
-            //    break;
-            //}
+            if(i > 1000){
+                break;
+            }
             //si no es cabecera ni fin asignarle  variables.
 
             textInFile 		= textInFile + frase;
@@ -749,37 +710,32 @@ int main()
             textInFile = "";
             i++;
 
-            printf("\rSuffix-Tree <- %3.2f %%", 100*(float)i/259409.0);
+            printf("\r\tSuffix-Tree <- %3.2f %%", 100*(float)i/259409.0);
         }
     }
     else
     {
-        cout << "Â¡Error! El archivo no pudo ser abierto." << endl;
+        cout << "¡Error! El archivo no pudo ser abierto." << endl;
     }
     ficheroEntrada.close();
     
-    cout<<"\n\nBusqueda:\n"<<endl;
-    cout<<"=========\n"<<endl;
+    cout<<"\n\nBusqueda"<<endl;
+    cout<<"============================================================"<<endl;
     string word;
-    clock_t t;
-
+    //clock_t t;
 
     while (true){
-	    cout<<"Query: ";
-	    
-	    //cin>>word;
+
+	    cout<<"\nQuery: ";
 	    getline(cin, word);
-	    t = clock();
+	    if (word.size()==0){continue;}
+	    //t = clock();
+	    cout << "================================ Resultado de busqueda ("<< word<< ")================================" << endl;    
 	    mg->find(word);
-
-	    t = clock() - t;
-	    
-	    printf ("\n<======= (%.8f seconds)======\n",((float)t)/CLOCKS_PER_SEC);
-	    cout<<"\n================================ Resultado de busqueda ("<< word << ")================================\n"<<endl;
-	    printf ("It took me %d clicks (%f seconds).\n",t,((float)t)/CLOCKS_PER_SEC);   	
+	    //t = clock() - t;
+	    //printf ("\n<======= (%.8f seconds)======\n",((float)t)/CLOCKS_PER_SEC);
+	   
+	    cout<<"\n================================== Final de busqueda ("<< word << ")================================\n"<<endl;
+	    continue;   	
     }
-	
-    
-    //system("pause"); 
-
 }
