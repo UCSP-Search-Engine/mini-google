@@ -163,6 +163,8 @@ class SuffixTree
 				//return;
 			}
 		}
+		suffix.clear();
+		words.clear();
 	}
 
 	//This function search return the correct node where we can insert the word suffix.
@@ -724,9 +726,9 @@ int main()
             	continue;
 
             //======================Number of text to read============================================
-            if(i > 10){
-                break;
-            }
+            //if(i > 10){
+            //    break;
+            //}
             //si no es cabecera ni fin asignarle  variables.
 
             textInFile 		= textInFile + frase;
