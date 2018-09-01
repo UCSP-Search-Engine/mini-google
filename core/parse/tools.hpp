@@ -56,10 +56,6 @@ string Lower2(string s){
 		if( (int)s[i] != -61){
 			result += currentChar;
 		} 
-		//if( (int)s[i] == -15) s[i] = 'n'; 
-		//system("PAUSE()");
-		//cout<<s[i]<<"->"<<(int)s[i]<<endl;
-		//if(s[i] == '\n'){ s[i] = ' ';};
 	}
 	return result;
 }
@@ -122,7 +118,8 @@ string DelMin(string s){
     		resultado=resultado+quitar_min(s[i]); 							
     	}
     	else{
-    		resultado = "\0";
+    		char currentChar = ' ';
+    		resultado += currentChar;
     	}  	
     }
     //cout << " - "<<resultado << endl;

@@ -10,6 +10,141 @@
 
 using namespace std;
 
+//----> HASH
+struct Articulo {
+  string titulo;
+  string contenido;
+} ;
+map <int, Articulo> mapContent;
+
+
+char Change(char letra){
+	if( (int)letra == -31 or (int)letra== -63 	or (int)letra==-95 or (int)letra==-127) 	letra = 'a'; 
+	if(	(int)letra == -55 or (int)letra== -23 	or (int)letra==-87 or (int)letra==-119) 	letra = 'e'; 
+	if( (int)letra == -19 or (int)letra== -51 	or (int)letra==-83 or (int)letra==-115) 	letra = 'i'; 
+	if( (int)letra == -13 or (int)letra== -45 	or (int)letra==-77 or (int)letra==-109) 	letra = 'o'; 
+	if( (int)letra == -38 or (int)letra== -6  	or (int)letra==-70 or (int)letra==-102) 	letra = 'u';
+	if( (int)letra == -79 or (int)letra== -111  or (int)letra==-15)					 		letra = char(-15);
+	return letra; 	
+}
+
+string ParserData(string s){
+    int Switch;
+    string resultado="";
+    int longitud=s.length();	
+    for (int i = 0; i < longitud; i++){
+    	char chr = Change(s[i]);
+    	resultado += chr;
+    }
+    return resultado;
+}
+
+
+string recorrerMAP(string s,int  pos){
+	string resultado;
+	//cout<<"pos recorrer"<<pos<<endl;
+	s=s.substr(pos);int i;
+	//cout<<"s "<<s<<endl;
+	//system("PAUSE()");
+	for(i=1;i<s.length();i++){
+		if(s[i] == '"'){
+			break;
+		} 
+	}	
+	//cout<<"i "<<i<<endl;
+	resultado=s.substr(0,i);
+	//cout<<"resultado recorrer "<<resultado<<endl;
+	//system("PAUSE()");
+	resultado = ParserData(resultado);
+	return resultado;
+}
+
+void cargarTexto(){
+	setlocale(LC_ALL, "spanish");	
+	setlocale(LC_CTYPE, "Spanish");
+	 
+	string url;
+	int cont=10000;
+//-------------------lectura de data 
+	string frase;
+	int i=0;
+	vector <string> textInFile(999999);
+	ifstream ficheroEntrada;
+
+	for(int k = 0;cont < 485000;k++){
+
+		//ficheroEntrada.open ("../../raw.es/spanishText_10000_15000");
+		url="../../raw.es/spanishText_"+to_string(cont)+'_'+to_string(cont+5000);
+		
+		cont=cont+5000;
+
+		ficheroEntrada.open (url);
+		if(ficheroEntrada.fail()){
+			continue;
+		} else {
+			printf("[%2d]", k);
+			cout<<" File: "<<url<<endl;
+		}
+		while(!ficheroEntrada.eof()){  
+
+			getline(ficheroEntrada, frase);
+			if(frase =="</doc>"){	
+				continue;
+			}
+			if(frase =="ENDOFARTICLE."){
+				i++;	
+				continue;
+			}
+		//si no es cabecera ni fin asignarle a una variable.
+			if(frase !="ENDOFARTICLE." && frase !="</doc>"){
+				textInFile[i] = textInFile[i] + frase;
+				if(frase.length() != 0)
+					textInFile[i]+= "\n";
+				continue;		
+			}
+		}
+	ficheroEntrada.close();
+	}
+//----------------------------------------------------------------
+
+ //___________________________________________________________
+	int posinit,posend,posid,postittle,posnfil,posproce,posdbindex;
+	int a=i;
+	
+	for (int i = 0; i < a; ++i)
+	{
+		string sstart,ssend,ssid,ssttitle,ssnfil,ssprocesed,ssdbindex,mensaje;
+		sstart='<',ssend='>',ssid='=',ssttitle='=',
+		ssnfil='=',ssprocesed='=',ssdbindex='=';
+
+		posinit=textInFile[i].find(sstart);
+
+		posid=textInFile[i].find(ssid,posinit);
+ 		ssid=recorrerMAP(textInFile[i],posid+2);
+
+		postittle=textInFile[i].find(ssttitle,posid+2);
+		ssttitle=recorrerMAP(textInFile[i],postittle+2);	
+
+		posnfil=textInFile[i].find(ssnfil,postittle+2);
+		ssnfil=recorrerMAP(textInFile[i],posnfil+2);
+		
+		posproce=textInFile[i].find(ssprocesed,posnfil+2);
+		ssprocesed=recorrerMAP(textInFile[i],posproce+2);
+
+		posdbindex=textInFile[i].find(ssdbindex,posproce+2);
+		ssdbindex=recorrerMAP(textInFile[i],posdbindex+2);	
+
+		posend=textInFile[i].find(ssend);
+
+		Articulo art;
+		art.titulo = ssttitle;
+		art.contenido = textInFile[i].substr(posend+2);
+		mapContent.insert(pair <int, Articulo> (stoi(ssdbindex),art));
+
+	}
+}
+//<---- HASH
+
 class Edge;
 
 class Node
@@ -63,6 +198,7 @@ public:
 	void addCantCoicidencia()
 	{
 		this->coincidences[coincidences.size()-1] += 1;
+		
 	}
 	friend class Node;
 	friend class SuffixTree;
@@ -113,12 +249,18 @@ public:
 	vector<string> getSuffix(string word)
 	{
 		vector<string> suffix;
+
+		// ===================== (Sin Sufijos)
+		
 		suffix.push_back(word);
 		return suffix;
+
+		// ===================== (Sin Sufijos)
 		int i = word.size() - 1;
 
 		for (; i >= 0; i--)
 		{
+			if (i <4) {break;}
 			suffix.push_back(word.substr(i));
 		}
 		return suffix;
@@ -150,11 +292,26 @@ class SuffixTree
 		vector<string> words = w.getWords(text);
 		int i = 0;
 
+		bool FLAG=false;
+
 		for (; i<words.size(); i++)
 		{
 			//cout<<"----------------"<<endl;
 			//cout<<"-"<<words[i].word<<"-"<<words[i].index<<"-"<<endl;
-
+			//if (words.size()>10){
+			//}
+			
+			//cout<<"-->"<<endl;
+			if (words.size()>2){
+				for (int wi = 0; wi < words[i].size()-1; wi++){
+					if (words[i][wi]==words[i][wi+1]){
+						FLAG = true;
+					}
+				}
+			}
+			if (FLAG == true){continue;}
+			//cout<<"<--"<<endl;
+			
 			vector<string> suffix = w.getSuffix(words[i]);
 			
 			for (int j = 0; j<suffix.size(); j++)
@@ -173,7 +330,7 @@ class SuffixTree
 	//This function search return the correct node where we can insert the word suffix.
 	//Also it returns the edge position where the suffix has a coincidence (if it is -1 there is not a coincidence).
 	//On the other side, it returns the coincidence string with respect to the position to insert.
-	Node * search(string &suffix, string &parteCoinciden, Node *node, int &edgePos, int index)
+	Node * search(string &suffix, string &parteCoinciden, Node *node, int &edgePos,int index)
 	{
 		edgePos = -1;
 		if (node->edges.size() == 0)
@@ -190,12 +347,23 @@ class SuffixTree
 
 			if (substring1 == substring2)
 			{
+
+				//----------Agregar coicidencias
+				//if the suffix is from a different text (push_back)
+				if (node->edges[i].indexes[node->edges[i].indexes.size() - 1] != index)
+				{
+					node->edges[i].putOtherIndex(index);
+				}
+				else //If the suffix is from the same text, add coincidence(+1).
+				{
+					node->edges[i].addCantCoicidencia();
+				}
+				//---------------Fin Agregar coicidencias
 				parteCoinciden += substring1;
 				suffix = suffix.substr(1);
 				edgePos = i;
 
 				int j = 0, k = 1;
-
 				for (; j<suffix.size() && k<node->edges[i].suffixString.size(); j++, k++)
 				{
 					substring1 = suffix.substr(j, 1);
@@ -229,7 +397,7 @@ class SuffixTree
 	// Recursive search: it searches the correct node from to root.
 	Node * search(string &suffix, string &parteCoinciden, int &edgePos, int index)
 	{
-		return search(suffix, parteCoinciden, root, edgePos, index);
+		return search(suffix, parteCoinciden, root, edgePos,index);
 	}
 
 
@@ -330,10 +498,8 @@ class SuffixTree
 				if (noCoinciden.size()>0)
 					node->edges.push_back(Edge(node, noCoinciden, index));
 			}
-
-			//In case all the suffix coincide in the tree (we must not to add again).
-
 			/*
+			//In case all the suffix coincide in the tree (we must not to add again).
 			if (noCoinciden.size() == 0)
 			{
                 //if the suffix is from a different text (push_back)
@@ -348,10 +514,7 @@ class SuffixTree
                 }
 			}
 			*/
-		}
-
-
-		
+		}		
 		//system("pause");
 	}
 
@@ -425,72 +588,25 @@ public:
             idTree = 0;
         //print();
     }
-   	void buscarIndicesHojas(Edge edge, map<int, int> &result)
-	{
-		//if (edge.endNode == NULL)//Significa q llego a una arista hoja
-		
-		cout<<edge.indexes.size()<<endl;
-		for (int j = 0; j < edge.indexes.size(); j++)
-		{
-				/*if (result.find(edge.indexes[j]) != result.end()) //si lo contiene
-				{
-					result[edge.indexes[j]] = result.find(edge.indexes[j])->second + edge.coincidences[j];
-				}
-				else
-				{
-					result[edge.indexes[j]] = edge.coincidences[j];
-				}*/
-				result[edge.indexes[j]] = edge.coincidences[j];
-				//map<int, int>::iterator it = result.find(edge.indexes[j]);
-				//if (it != result.end())
-				//	(*it).second = (*it).second + edge.coincidences[j];
-				//else
-				//	addresult[edge.indexes[j]] = edge.coincidences[j];
-		}
-		
-		/*else
-		{
-			for (int j = 0; j < edge.endNode->edges.size(); j++)
-			{
-				buscarIndicesHojas(edge.endNode->edges[j], result);
-			}
-		}*/
-	}
-    /*
 	void buscarIndicesHojas(Edge edge, map<int, int> &result)
 	{
-		if (result.size() > 20){
-		   	return;
-		}
-		if (edge.endNode == NULL)//Significa q llego a una arista hoja
-		{		
-
-
-#			pragma omp parallel for
-			for (int j = 0; j < edge.indexes.size(); j++)
-			{
-                if (result.find(edge.indexes[j]) != result.end()) //si lo contiene
-                {
-				    result[edge.indexes[j]] = result.find(edge.indexes[j])->second + edge.coincidences[j];
-                }
-                else
-                {
-                    result[edge.indexes[j]] = edge.coincidences[j];
-                }
-			}
-		}
-		else
+		map<int, int>::iterator it;
+		for (int j = 0; j < edge.indexes.size(); j++)
 		{
-			//if (result.size() > 10000){
-			//   	return;
-			//}
-			for (int j = 0; j < edge.endNode->edges.size(); j++)
-			{
-				buscarIndicesHojas(edge.endNode->edges[j], result);
-			}
+			result[edge.indexes[j]] = edge.coincidences[j];
+				/*
+				it = result.find(edge.indexes[j]);
+				if (it != result.end()){
+					cout<<"+++"<<endl;
+					(*it).second = (*it).second + edge.coincidences[j];
+				}
+				else {
+					result[edge.indexes[j]] = edge.coincidences[j];
+				}
+				*/
+		
 		}
 	}
-	*/
 	template<typename K, typename V>
 	std::multimap<V,K> invertMap(std::map<K,V> const &map)
 	{
@@ -502,7 +618,6 @@ public:
 
 		return multimap;
 	}
-	
 
     //Function to return a map with the keys and values; where the key is the index of the text and the value is the
     //coincidence number in the tree.
@@ -539,16 +654,24 @@ public:
 		cout << endl;
 	}
 
-	bool to20blocks(int &nblocks){//, ofstream &doc){
+	bool to20blocks(int nblocks){//, ofstream &doc){
 		char conf;
 		if (nblocks%20==0){
-			//doc.close();
-			cout<<"continuar?(y/n) ";
+			cout<<"\n\nVer mas(y/n) | Mostrar Doucmento(D/d)? ";
 			cin>>conf;
 
 			if ((conf == 'y') || (conf == 'Y')){
-				//doc.open("toapp.txt", ios::out);
 				return true;
+			}
+			if ((conf == 'd') || (conf == 'D')){
+				int docId;
+				cout<<"\nDocument(DbIndex) -> ";
+				cin>>docId;
+				cout<<endl;
+				cout<<mapContent.find(docId)->second.titulo<<endl;
+				cout<<"=================================================================================================\n"<<endl;
+				cout<<mapContent.find(docId)->second.contenido<<endl;
+				return false;
 			} else {
 				return false;
 			}
@@ -556,47 +679,40 @@ public:
 		else {
 			return true;
 		}
-	};
+	}
 
-	void printResult2(map<int, int> result, string texto,int MODE)//, vector<string> resultTitles)
+	void printResult2(map<int, int> result, bool MODE)//, vector<string> resultTitles)
 	{
-		//cout << "\n\n================================ Resultado de busqueda ("<< texto << ")================================\n" << endl;
-		if(result.size()==0)
-            cout << "No hay coicidencia" << endl;
-
         int i=0;
-
 		std::multimap<int,int>::reverse_iterator it;
-
-        //map<int, int >::iterator it;
         if (MODE == true){
-			/*
-			ofstream archivo;
-			archivo.open("toapp.txt", ios::out);
-			if(archivo.fail()){
-				cout<<"no se pudo abrir el archivo";
-				exit(1);
-			}
-			*/
-			printf ("================================= (%d results) ====================================\n", (int)result.size());
+        	printf("\nResultados: %d\n\n", (int)result.size());
 			for (it=result.rbegin(); it!=result.rend(); ++it){
-				printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->first, it->second);
-				cout<<"titulo : "<< documentTitles[it->first]<<endl;
+				//printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->first, it->second);
+				printf("[DbIndex = %6d] ", it->first);
+				cout<<mapContent.find(it->first)->second.titulo<<endl;
+				//cout<<documentTitles[it->first]<<endl;
 				i++;
-				/*
-				archivo <<"[";
-				archivo << i ;
-				archivo <<"] ";
 
-				archivo << documentTitles[it->first];
-				archivo <<"\n";
-				*/
 				bool contin = to20blocks(i);//, archivo);
-
 				if (contin != true){		
 					break;
 				}
 			}
+			char conf2;
+			cout<<"\nsalir(y/n)/document(D/d)? ";
+			cin>>conf2;
+
+			if ((conf2 == 'd') || (conf2 == 'D')){
+				int docId;
+				cout<<"\nDocument(DbIndex) -> ";
+				cin>>docId;
+				cout<<endl;
+				cout<<mapContent.find(docId)->second.titulo<<endl;
+				cout<<"=================================================================================================\n"<<endl;
+				cout<<mapContent.find(docId)->second.contenido<<endl;		
+			} 
+
         } else {
 			ofstream archivo;
 			archivo.open("toapp.txt", ios::out);
@@ -618,36 +734,10 @@ public:
         	}
         	archivo.close();
         }
-
-        /*
-		ofstream archivo;
-		archivo.open("toapp.txt", ios::out);
-		if(archivo.fail()){
-			cout<<"no se pudo abrir el archivo";
-			exit(1);
-		}
-
-		for (it=result.rbegin(); it!=result.rend(); ++it){
-			printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->first, it->second);
-			cout<<"titulo : "<< documentTitles[it->first]<<endl;
-			i++;
-			archivo <<"[";
-			archivo << i ;
-			archivo <<"] ";
-
-			archivo << documentTitles[it->first];
-			archivo <<"\n";
-			bool contin = to20blocks(i, archivo);
-			if (contin != true){		
-				break;
-			}
-		}
-		*/
 	}
 
-	void printResult(multimap<int,int> result, string texto,int MODE)//, vector<string> resultTitles)//, vector<string> resultTitles)
+	void printResult(multimap<int,int> result, bool MODE)//, vector<string> resultTitles)//, vector<string> resultTitles)
 	{
-		//cout << "================================ Resultado de busqueda ("<< texto << ")================================" << endl;
 		if(result.size()==0)
             cout << "No hay coicidencia" << endl;
 
@@ -667,8 +757,10 @@ public:
 		{
 			//resultTitles.push_back(documentTitles[rit->second]);
 			//std::cout <<"dbIndex: "<< it->second << "\t coincidencias: " << it->first << "\n";
-			printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->second, it->first);
-			cout<<"titulo : "<< documentTitles[it->second]<<endl;
+			//printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->second, it->first);
+			printf("[%6d] | ", it->second);
+			cout<<mapContent.find(it->second)->second.titulo<<endl;
+			//cout<< documentTitles[it->second]<<endl;
 			//std::cout <<"dbIndex: "<< rit->second << " \t titulo: " << resultTitles[i] << "\t coincidencias: " << rit->first << "\n";
             i++;
 
@@ -680,99 +772,40 @@ public:
 			if (contin != true){
 				break;
 			}
-			
+
 		}
+
+		char conf2;
+		cout<<"\nsalir(y/n)/document(D/d)? ";
+		cin>>conf2;
+		
+		if ((conf2 == 'd') || (conf2 == 'D')){
+			int docId;
+			cout<<"\nDocument(DbIndex) -> ";
+			cin>>docId;
+			cout<<endl;
+			cout<<mapContent.find(docId)->second.titulo<<endl;
+			cout<<"=================================================================================================\n"<<endl;
+			cout<<mapContent.find(docId)->second.contenido<<endl;		
+		} 
 	}
 
     //Function that return a map with the text index and the number of the coincidence
     bool find (string text, bool MODE)
     {
-		cout << "================================ Resultado de busqueda ("<< text<< ")================================" << endl;
+		cout << "\n================================ Resultado de busqueda ("<< text<< ")================================" << endl;
 		clock_t t;
 		t = clock();
 		Word word;
 		vector<string> words = word.getWords(text);
 		//vector<multimap<int,int>> mapsResults;
 		
-			if (words.size() == 1){
-			map<int, int> result = search(text);
-			vector<string> resultTitles;
-			t = clock() - t;
-			printf ("================================= (%.8f seconds) ====================================\n",((float)t)/CLOCKS_PER_SEC);
-			printResult2(result, text, MODE);//, resultTitles);
-		}
-		else{
-
-		
-			vector<map<int,int>> maps;
-			
-			for(string t: words)
-			{
-				maps.push_back(search(t));
-			}
-
-			int key, value; //key: dbindex, value: nro coincidences
-			map<int, int> result;
-
-			for(int i=0; i<maps.size(); i++)
-			{
-				for (map<int, int>::const_iterator it = maps[i].begin(); it != maps[i].end(); ++it)
-				{
-					vector<int> coincidences;
-					key = it->first;
-					value = it->second;
-					coincidences.push_back(value); //all the coincidences for the key.
-
-					map<int,int>::iterator itAux;
-					for(int k=i+1; k<maps.size(); k++)
-					{
-						itAux = (maps[k]).find(key);
-						
-						if (itAux != maps[k].end())//si existe
-						{
-							value = itAux->second;
-							coincidences.push_back(value);
-							maps[k].erase (itAux);
-						}
-						else
-						{
-							coincidences.push_back(0);
-						}
-					}
-					
-					int min = 1000000000;
-					for(int j=0; j<coincidences.size(); j++)
-					{
-						if(coincidences[j]<min)
-							min = coincidences[j];
-					}
-					result[key] = min;
-				}
-
-			}
-
-			multimap<int,int> multimap = invertMap(result);
-			vector<string> resultTitles;	
-
-
-			std::multimap<int,int>::reverse_iterator rit;
-	  		for (rit=multimap.rbegin(); rit!=multimap.rend(); ++rit)
-			{
-	    		//std::cout << rit->first << " => " << rit->second << '\n';
-				resultTitles.push_back(documentTitles[rit->second]);
-			}
-
-			printResult(multimap, text, MODE);//, resultTitles);
-	     	//New <---------------------------------------------------------------
-     	}
-		// STABLE <------------------------------
-		/*
 		if (words.size() == 1){
 			map<int, int> result = search(text);
 			vector<string> resultTitles;
 			t = clock() - t;
-			printf ("================================= (%.8f seconds) ====================================\n",((float)t)/CLOCKS_PER_SEC);
-			printResult2(result, text);//, resultTitles);
+			printf("\nBusqueda en %.8f segundos\n", (float)t/CLOCKS_PER_SEC);
+			printResult2(result, MODE);//, resultTitles);
 		}
 		else{
 
@@ -835,13 +868,9 @@ public:
 				resultTitles.push_back(documentTitles[rit->second]);
 			}
 
-			printResult(multimap, text);//, resultTitles);
+			printResult(multimap, MODE);//, resultTitles);
 	     	//New <---------------------------------------------------------------
      	}
-
-
-     	*/
-     	// STABLE <------------------------------
     }
 
 
@@ -865,12 +894,13 @@ string recorrer(string s,int  pos){
     return resultado;
 }
 
+
 void MakeSuffixTree(MiniGoogle *mg){
   
     //--------------Lectura de data------------------------
     string frase;
     int i=0;
-
+    cargarTexto();
 
     string textInFile;
     int dbindex;
@@ -929,92 +959,3 @@ void MakeSuffixTree(MiniGoogle *mg){
     }
     ficheroEntrada.close();	
 }
-/*
-int main()
-{
-
-    MiniGoogle *mg = new MiniGoogle(1);
-
-    
-    //--------------Lectura de data------------------------
-    string frase;
-    int i=0;
-
-
-    string textInFile;
-    int dbindex;
-    string title;
-    string contenido;
-
-    int posend,posid,postittle,posnfil,posdbindex;
-    string ssid,ssttitle,ssnfil,ssdbindex,sscontenido;
-
-    ifstream ficheroEntrada;
-    ficheroEntrada.open ("parse/raw.txt");
-    if (ficheroEntrada.is_open())
-    { 
-        cout << "\nLectura correcta" << endl;
-        cout << "============================================================\n" << endl;
-
-        while(!ficheroEntrada.eof())
-        {  
-            //READ
-            getline(ficheroEntrada, frase);
-            if(frase.length() == 0)
-            	continue;
-
-            //======================Number of text to read============================================
-            if(i > 1000){
-                break;
-            }
-            //si no es cabecera ni fin asignarle  variables.
-
-            textInFile 		= textInFile + frase;
-            string sstart 	="|";
-            
-            posdbindex 		= textInFile.find(sstart);
-			dbindex 		= stoi(recorrer(textInFile,posdbindex));
-
-
-            postittle   	= textInFile.find(sstart,posdbindex+1);
-            title 			= recorrer(textInFile,postittle);
-
-            posend		 	= textInFile.find(sstart,postittle+1);
-            contenido		= recorrer(textInFile,posend+1);
-
-            mg->putDocument(0, dbindex, title, contenido);
-
-            textInFile = "";
-            i++;
-
-            printf("\r\tSuffix-Tree <- %3.2f %%", 100*(float)i/259409.0);
-        }
-    }
-    else
-    {
-        cout << "¡Error! El archivo no pudo ser abierto." << endl;
-    }
-    ficheroEntrada.close();
-    
-    cout<<"\n\nBusqueda"<<endl;
-    cout<<"============================================================"<<endl;
-    string word;
-    //clock_t t;
-
-    while (true){
-
-	    cout<<"\nQuery: ";
-	    getline(cin, word);
-	    word = Lower(word);
-	    if (word.size()==0){continue;}
-	    //t = clock();
-	    //cout << "================================ Resultado de busqueda ("<< word<< ")================================" << endl;    
-	    mg->find(word);
-	    //t = clock() - t;
-	    //printf ("\n<======= (%.8f seconds)======\n",((float)t)/CLOCKS_PER_SEC);
-	   
-	    cout<<"\n================================== Final de busqueda ("<< word << ")================================\n"<<endl;
-	    continue;   	
-    }
-}
-*/

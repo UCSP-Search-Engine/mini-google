@@ -11,32 +11,36 @@ int main(){
     string OldQuery="$";
     string Query;
     MiniGoogle *mg = new MiniGoogle(1);
+    cargarTexto();
     MakeSuffixTree(mg);
 
     char modo;
 
     while (true){
-        cout<<"\nModo COnsola(C/c) o Modo App(A/p) :";
-        cin >>modo;
+        cout<<"\n\nConsola(C/c)/Aplicacion(A/a)>";
+        //cin >>modo;
+        cin.get(modo);
+        cout<<endl;
         if (modo == 'C' or modo == 'c' or modo == 'A' or modo == 'a'){
             break;
         }
     }
 
-
+    
     if (modo == 'C' or modo == 'c'){
         while (true){
             cout<<"\n\nBusqueda"<<endl;
             cout<<"============================================================"<<endl;
-            string word;
+            string query_val= "";
             cout<<"\nQuery: ";
-            getline(cin, word);
-            word = Lower(word);
-            if (word.size()==0){continue;}
+            while (getline(cin, query_val)!= "" and query_val.size() != 0 and query_val != ""){
+                cout<<"query_val"
+                query_val = Lower(query_val);
+                mg->find(query_val, true);               
+            }
 
-            mg->find(word, true);
-                   
-            cout<<"\n================================== Final de busqueda ("<< word << ")================================\n"<<endl;     
+
+            cout<<"\n================================== Final de busqueda ("<< query_val << ")================================\n"<<endl;     
         }
     } 
     else if (modo == 'A' or modo == 'a'){

@@ -10,28 +10,6 @@
 
 using namespace std;
 
-/*
-bool esdeseado(char letra){
-	bool bandera=false;
-	enie=(char)(-15);//asigno la ñ
-    const char Caracteresdeseados[] = { 
-    'a','b','c','d','e','f','g','h','i','j',
-    'k','l','m','n','o','p','q','r','s','t',
-    'v','u','w','x','y','z','0','1','2','3',
-    '4','5','6','7','8','9',' ',enie};
-    int longitud=strlen(Caracteresdeseados);
-
-    for (int j = 0; j < longitud; j++){
-            if (letra == Caracteresdeseados[j]){
-            	bandera=true;
-            	continue;
-            		//cout << j << endl;
-            		//system("PAUSE()"); 
-            } 
-        }
-    return	bandera;		
-}
-*/
 string DelCharIndeseados(string s){
     int Switch;
     string resultado="";
@@ -40,37 +18,13 @@ string DelCharIndeseados(string s){
     	if(esdeseado(s[i])){
     		resultado=resultado+s[i];
     	}
+    	else if(s[i] == '-'){
+    		resultado += ' ';
+    	}
     }
     return resultado;
 }
 
-/*
-string Lower(string s){
-	int len=s.length();
-	//cout<<'ñ'<<" - "<<'ó'<<endl;
-	for (int i = 0; i < len; ++i)
-	{
-		//TOlower
-		//cout << (char)-15 << s[i] <<(int)s[i] << endl;
-        //	system("PAUSE()"); 
-		if(s[i]>='A' && s[i] <='Z'){
-			s[i]=(s[i] + 32);
-		}
-		//Quitar tildes
-		//cout << (int)s[i]<< endl;system("PAUSE()");
-		if( (int)s[i] == -31 or (int)s[i]== -63) s[i] = 'a'; 
-		if(	(int)s[i] == -55 or (int)s[i]== -23) s[i] = 'e'; 
-		if( (int)s[i] == -19 or (int)s[i]== -51) s[i] = 'i'; 
-		if( (int)s[i] == -13 or (int)s[i]== -45 ) s[i] = 'o'; 
-		if( (int)s[i] == -38 or (int)s[i]== -6 ) s[i] = 'u'; 
-		//if( (int)s[i] == -15) s[i] = 'n'; 
-		//system("PAUSE()");
-		if(s[i] == '\n'){ s[i] = ' ';};
-	}
-
-	return s;
-}
-*/
 string recorrer(string s,int  pos){
 	string resultado;
 	//cout<<"pos recorrer"<<pos<<endl;
@@ -110,7 +64,7 @@ int main (){
 
 		ficheroEntrada.open (url);		
 		if(ficheroEntrada.fail()){
-			cout<<"["<<k<<"] "<<" url: "<<url<<" <- Not Found!"<<endl;
+			//cout<<"["<<k<<"] "<<" url: "<<url<<" <- Not Found!"<<endl;
 			//cout<<"no se pudo abrir el archivo"<<endl;
 			continue;
 		} else {
@@ -128,11 +82,14 @@ int main (){
 			}
 		//si no es cabecera ni fin asignarle a una variable.
 			if(frase !="ENDOFARTICLE." && frase !="</doc>"){
-				textInFile[i] = textInFile[i] + frase+"\n";
-				continue;		
+				if (frase.length() != 0){
+					textInFile[i] = textInFile[i] + frase+"\n";
+				}
+				
+				//continue;		
 			}
 		}
-	ficheroEntrada.close();
+		ficheroEntrada.close();
 	}
 //----------------------------------------------------------------
 	ofstream archivo;
