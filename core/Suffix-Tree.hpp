@@ -221,7 +221,7 @@ public:
 	vector<string> getWords(string text)
 	{
 		vector<string> words;
-
+		
 		int posSpace;
 		string word;
 
@@ -243,6 +243,7 @@ public:
 			text = text.substr(posSpace + 1);
 		}
 		return words;
+		
 	}
 
 	//Getting the word suffixes and set up their indexes.
@@ -657,7 +658,7 @@ public:
 	bool to20blocks(int nblocks){//, ofstream &doc){
 		char conf;
 		if (nblocks%20==0){
-			cout<<"\n\nVer mas(y/n) | Mostrar Doucmento(D/d)? ";
+			cout<<"\n\nVer mas(y/n) | Mostrar Documento(D/d)? ";
 			cin>>conf;
 
 			if ((conf == 'y') || (conf == 'Y')){
@@ -793,7 +794,7 @@ public:
     //Function that return a map with the text index and the number of the coincidence
     bool find (string text, bool MODE)
     {
-		cout << "\n================================ Resultado de busqueda ("<< text<< ")================================" << endl;
+		cout << "\n================================ Resultado de busqueda ( "<< text<< " ) ==============================" << endl;
 		clock_t t;
 		t = clock();
 		Word word;

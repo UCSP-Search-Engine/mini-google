@@ -81,7 +81,7 @@ public:
 	{
 		vector<string> words;
 
-		/*int posSpace;
+		int posSpace;
 		string word;
 
 		while (text.size() >= 1)
@@ -100,17 +100,7 @@ public:
 				words.push_back(word);
 
 			text = text.substr(posSpace + 1);
-		}*/
-
-		istringstream isstream(text);
-		string tempStr;
-
-		while (isstream >> tempStr)
-		{
-			//isstream >> tempStr;
-			words.push_back(tempStr);
 		}
-		return words;
 	}
 
 	//Getting the word suffixes and set up their indexes.

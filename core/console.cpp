@@ -17,6 +17,7 @@ int main(){
 		cout<<"\nQuery: ";
 		getline(cin, query_val);
 		if (query_val.size()==0 or query_val == ""){
+			getline(cin, query_val);
 			continue;
 		}
 		query_val = Lower2(query_val);
