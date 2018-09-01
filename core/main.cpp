@@ -34,7 +34,7 @@ int main(){
             string query_val= "";
             cout<<"\nQuery: ";
             while (getline(cin, query_val)!= "" and query_val.size() != 0 and query_val != ""){
-                cout<<"query_val"
+                cout<<"query_val";
                 query_val = Lower(query_val);
                 mg->find(query_val, true);               
             }

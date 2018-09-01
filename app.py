@@ -5,14 +5,15 @@ import os
 from flask import Flask
 from flask import request
 from flask import render_template
+from flask_paginate import Pagination, get_page_parameter
 
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 app 		= Flask(__name__)
 app.debug 	= True
 
-@app.route('/foo', methods=['POST']) 
-def foo():
+@app.route('/minigoogle', methods=['POST']) 
+def minigoogle():
 	global THIS_FOLDER
 
 	query = request.form.get('query')
@@ -49,10 +50,18 @@ def foo():
 		content[ci] = cont
 
 	for cont in content:
-		print cont
+		print (cont)
 	data = {}
 	data['titles'] = content
-	return render_template('index.html', result=data, ti=content)
+
+	longitud = len(content)
+
+	return render_template('index.html', result=data, ti=content, cantidad=longitud)
+
+@app.route('/view/<int:dbindex>')
+def view(dbindex):
+	return render_template('viewarticle.html')
+
 
 @app.route('/')
 def home():

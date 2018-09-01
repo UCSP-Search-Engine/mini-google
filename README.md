@@ -6,25 +6,43 @@ Clonar el repositorio:
 ```
 git clone https://github.com/UCSP-Search-Engine/mini-google.git
 ```
+
+Copiar dentro de la carpeta generada **mini-google** la carpeta **raw.es** con todos los artículos a ser pre-procesados.
+
+### Parse: Pre-Procesamiento
+
+Moverse a la carpeta
+
+```
+$cd core/parse
+```
+Ejecutar el siguiente comando para compilar:
+```
+make
+
+```
+Ejecutar:
+```
+
+./parse
+```
+
+
 ### Mini-Google: Core
 Moverse a la carpeta descargada:
 ```
 $cd mini-google
 ```
 
-Ir a la carpeta 'core':
+Ejecutar el siguiente comando para compilar:
 ```
-../mini-google$cd core
-```
-Compilar el 'main.cpp':
-```
-g++ main.cpp -o out
+make
 ```
 Ejecutar:
 ```
-./out
+./engine
 ```
-Si se elige la opción **App**, seguir las siguientes instrucciones:
+Para la opción **App**, seguir las siguientes instrucciones:
 
 ### Mini-Google: App
 
