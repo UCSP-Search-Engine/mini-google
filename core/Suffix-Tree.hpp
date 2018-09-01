@@ -672,7 +672,13 @@ public:
 				cout<<mapContent.find(docId)->second.titulo<<endl;
 				cout<<"=================================================================================================\n"<<endl;
 				cout<<mapContent.find(docId)->second.contenido<<endl;
-				return true;
+				cout<<"\n\nVer más artículos (Y/N)";
+				cin>>conf;
+				if ((conf == 'y') || (conf == 'Y')){
+					return true;
+				} else {
+					return false;
+				}
 			} else {
 				return false;
 			}
@@ -823,7 +829,7 @@ public:
 			}
 
 			char conf2;
-			cout<<"\nsalir(y/n)/document(D/d)? ";
+			cout<<"\nsalir(S/s)/document(D/d)? ";
 			cin>>conf2;
 			
 			if ((conf2 == 'd') || (conf2 == 'D')){
@@ -842,7 +848,7 @@ public:
     //Function that return a map with the text index and the number of the coincidence
     bool find (string text, bool MODE)
     {
-		cout << "\n================================ Resultado de busqueda ( "<< text<< " ) ==============================" << endl;
+		cout << "\n================================ Resultado de búsqueda ( "<< text<< " ) ==============================" << endl;
 		clock_t t;
 		
 		Word word;
@@ -856,7 +862,7 @@ public:
 			t = clock() - t;
 			vector<string> resultTitles;
 			
-			printf("\nBusqueda en %.8f segundos\n", (float)t/CLOCKS_PER_SEC);
+			printf("\nBúsqueda en %.8f segundos\n", (float)t/CLOCKS_PER_SEC);
 			printResult2(result, MODE);//, resultTitles);
 		}
 		else{
@@ -869,7 +875,7 @@ public:
 				maps.push_back(search(t));
 			}
 			t = clock() - t;
-			printf("\nBusqueda en %.8f segundos\n", (float)t/CLOCKS_PER_SEC);
+			printf("\nBúsqueda en %.8f segundos\n", (float)t/CLOCKS_PER_SEC);
 
 			int key, value; //key: dbindex, value: nro coincidences
 			map<int, int> result;
@@ -1004,6 +1010,7 @@ void MakeSuffixTree(MiniGoogle *mg){
             if (i%10==0){
             	printf("\r\tSuffix-Tree <- %3.2f %%", 100*(float)i/259409.0);
             }
+
             
         }
     }
@@ -1011,5 +1018,6 @@ void MakeSuffixTree(MiniGoogle *mg){
     {
         cout << "¡Error! El archivo no pudo ser abierto." << endl;
     }
-    ficheroEntrada.close();	
+    ficheroEntrada.close();
+    cout<<endl;	
 }

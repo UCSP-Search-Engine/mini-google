@@ -11,13 +11,12 @@ int main(){
 	MakeSuffixTree(mg);
 
 	while (true){
-		cout<<"\n\nBusqueda"<<endl;
-		cout<<"============================================================"<<endl;
+		//cout<<"\n\nBusqueda"<<endl;
+		//cout<<"============================================================"<<endl;
 		string query_val;
-		cout<<"\nQuery: ";
+		cout<<"\rQuery: ";
 		getline(cin, query_val);
 		if (query_val.size()==0 or query_val == ""){
-			//getline(cin, query_val);
 			continue;
 		}
 		query_val = Lower2(query_val);

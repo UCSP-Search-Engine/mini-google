@@ -46,8 +46,9 @@ string Lower2(string s){
 		if(	(int)s[i] == -55 or (int)s[i]== -23 or (int)s[i]==-87 or (int)s[i]==-119) s[i] = 'e'; 
 		if( (int)s[i] == -19 or (int)s[i]== -51 or (int)s[i]==-83 or (int)s[i]==-115) s[i] = 'i'; 
 		if( (int)s[i] == -13 or (int)s[i]== -45 or (int)s[i]==-77 or (int)s[i]==-109) s[i] = 'o'; 
-		if( (int)s[i] == -38 or (int)s[i]== -6  or (int)s[i]==-70 or (int)s[i]==-102 ) s[i] = 'u'; 
+		if( (int)s[i] == -38 or (int)s[i]== -6  or (int)s[i]==-70 or (int)s[i]==-102) s[i] = 'u'; 
 		if( (int)s[i] == -79 or (int)s[i]== -111) s[i] = char(-15);
+		
 		currentChar = s[i];
 
 		if (esdeseado(s[i])==false){
