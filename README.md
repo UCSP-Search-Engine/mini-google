@@ -6,7 +6,6 @@ Clonar el repositorio:
 ```
 git clone https://github.com/UCSP-Search-Engine/mini-google.git
 ```
-
 Copiar dentro de la carpeta generada **mini-google** la carpeta **raw.es** con todos los artículos a ser pre-procesados.
 
 ### Parse: Pre-Procesamiento
@@ -27,13 +26,11 @@ Ejecutar:
 ./parse
 ```
 
-
 ### Mini-Google: Core
 Moverse a la carpeta descargada:
 ```
 $cd mini-google
 ```
-
 Ejecutar el siguiente comando para compilar:
 ```
 make
