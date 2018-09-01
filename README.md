@@ -18,11 +18,9 @@ $cd core/parse
 Ejecutar el siguiente comando para compilar:
 ```
 make
-
 ```
 Ejecutar:
 ```
-
 ./parse
 ```
 
