@@ -8,7 +8,7 @@ from numpy import *
 from flask import Flask
 from flask import request
 from flask import render_template
-from flask_paginate import Pagination, get_page_parameter
+#from flask_paginate import Pagination, get_page_parameter
 
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
