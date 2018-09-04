@@ -103,7 +103,7 @@ void cargarTexto(){
 				continue;		
 			}
 		}
-	ficheroEntrada.close();
+		ficheroEntrada.close();
 	}
 //----------------------------------------------------------------
 
@@ -722,20 +722,25 @@ public:
 
         } else {
 			ofstream archivo;
-			archivo.open("toapp.txt", ios::out);
+			archivo.open("core/toapp.txt", ios::binary);
 			if(archivo.fail()){
 				cout<<"no se pudo abrir el archivo";
 				exit(1);
 			}
 
         	for (it=result.rbegin(); it!=result.rend(); ++it){
-				printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->first, it->second);
-				cout<<"titulo : "<< documentTitles[it->first]<<endl;
+				//printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->first, it->second);
+				//cout<<"titulo : "<< documentTitles[it->first]<<endl;
 				i++;
-        		archivo <<"[";
+        		/*archivo <<"[";
         		archivo << i ;
         		archivo <<"] ";
-        		archivo << documentTitles[it->first];
+        		archivo << documentTitles[it->first];*/
+        		//archivo <<"[";
+        		archivo << it->first;
+        		archivo <<"|";
+        		archivo << mapContent.find(it->first)->second.titulo;
+        		//archivo << documentTitles[it->first];
         		archivo <<"\n";
 
         	}
@@ -933,7 +938,10 @@ public:
      	}
     }
 
-
+    string get_contenido(int dbIndex)
+    {
+    	return mapContent.find(dbIndex)->second.contenido;
+    }
 
 	friend class Node;
 	friend class SuffixTree;
