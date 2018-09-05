@@ -692,7 +692,7 @@ public:
 	{
         int i=0;
 		std::multimap<int,int>::reverse_iterator it;
-        if (MODE == true){
+        if (MODE){
         	printf("\nResultados: %d\n\n", (int)result.size());
 			for (it=result.rbegin(); it!=result.rend(); ++it){
 				//printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->first, it->second);
@@ -721,6 +721,7 @@ public:
 			} 
 
         } else {
+        	printf("\nResultados: %d\n\n", (int)result.size());
 			ofstream archivo;
 			archivo.open("core/toapp.txt", ios::binary);
 			if(archivo.fail()){
@@ -750,7 +751,7 @@ public:
 
 	void printResult(multimap<int,int> result, bool MODE)//, vector<string> resultTitles)//, vector<string> resultTitles)
 	{
-		if (MODE == true){
+		if (MODE){
 			printf("\nResultados: %d\n\n", (int)result.size());
 
 			if(result.size()==0)
@@ -780,7 +781,7 @@ public:
 			}
 
 			char conf2;
-			cout<<"\nSalir(y/n)/Documento(D/d)? ";
+			cout<<"\nSalir(y/n)/Documento(D/dd)? ";
 			cin>>conf2;
 			
 			if ((conf2 == 'd') || (conf2 == 'D')){
@@ -817,23 +818,26 @@ public:
 				//std::cout <<"dbIndex: "<< it->second << "\t coincidencias: " << it->first << "\n";
 				//printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->second, it->first);
 				printf("[%6d] | ", it->second);
-				cout<<mapContent.find(it->second)->second.titulo<<endl;
+				//cout<<mapContent.find(it->second)->second.titulo<<endl;
 				//cout<< documentTitles[it->second]<<endl;
 				//std::cout <<"dbIndex: "<< rit->second << " \t titulo: " << resultTitles[i] << "\t coincidencias: " << rit->first << "\n";
 	            i++;
 
 
-				archivo << documentTitles[it->second];
-				archivo <<"\n";
+				/*archivo << documentTitles[it->second];
+				archivo <<"\n";*/
+				archivo << it->first;
+        		archivo <<"|";
+        		archivo << mapContent.find(it->first)->second.titulo;
 	            
-				bool contin = to20blocks(i);//, archivo);
+				/*bool contin = to20blocks(i);
 				if (contin != true){
 					break;
-				}
+				}*/
 
 			}
 
-			char conf2;
+			/*char conf2;
 			cout<<"\nsalir(S/s)/document(D/d)? ";
 			cin>>conf2;
 			
@@ -845,13 +849,13 @@ public:
 				cout<<mapContent.find(docId)->second.titulo<<endl;
 				cout<<"=================================================================================================\n"<<endl;
 				cout<<mapContent.find(docId)->second.contenido<<endl;		
-			} 				
+			}*/ 				
 		}
 
 	}
 
     //Function that return a map with the text index and the number of the coincidence
-    bool find (string text, bool MODE)
+    int find (string text, bool MODE)
     {
 		cout << "\n================================ Resultado de búsqueda ( "<< text<< " ) ==============================" << endl;
 		clock_t t;
@@ -869,6 +873,7 @@ public:
 			
 			printf("\nBúsqueda en %.8f segundos\n", (float)t/CLOCKS_PER_SEC);
 			printResult2(result, MODE);//, resultTitles);
+			return((int)result.size());
 		}
 		else{
 
@@ -935,6 +940,8 @@ public:
 
 			printResult(multimap, MODE);//, resultTitles);
 	     	//New <---------------------------------------------------------------
+	     	//, resultTitles);
+			return((int)multimap.size());
      	}
     }
 

@@ -9,11 +9,12 @@ string readQuery();
 MiniGoogle *mg = new MiniGoogle(1);
 
 
-void get_results(char *word){
+long get_results(char *word){
     //string word;
     //getline(cin, word);
     string newWord = Lower(string(word));
-    mg->find(newWord, false);
+    long numberResults = mg->find(newWord, false);
+    return numberResults;
 }
 
 void make_suffix_tree()
@@ -31,7 +32,7 @@ char* get_contenido(char* contenido, int dbIndex)
 
 extern "C"
 {
-    extern void cffi_get_results(char *word)
+    extern float cffi_get_results(char *word)
     {
         return get_results(word);
     }

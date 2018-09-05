@@ -2,10 +2,10 @@
 <html lang="en">
 {% include 'header.html' %}
 <body>
-	<div class="container">
+	<div class="container" style="background: #F2F2F2; padding-bottom: 30px;">
 
-		<div class="row" style="margin-bottom: 40px;">	
-			<div class="col-md-4">
+		<div class="row" style="margin-bottom: 30px; background: rgba(137,30,53,0.3)">	
+			<div class="col-md-4" style="background: rgba(137,30,53,0.8)">
 			</div>
 			<div class="col-md-8">
 				<div class="section-header" style="text-align: center">
@@ -23,8 +23,7 @@
 		<div class="row">
 			<div class="col-md-4">
 				<div class="aside-description">
-					<h2>Suffix Tree</h2>
-					<img style="width: 100%" src="https://upload.wikimedia.org/wikipedia/commons/d/d2/Suffix_tree_BANANA.svg">					
+					<img style="width: 100%" src="https://pbs.twimg.com/profile_images/989193227772231681/CsqLNKZr_400x400.jpg">					
 				</div>
 			</div>
 			<div class="col-md-8">
@@ -36,14 +35,45 @@
 
 				<dir class="section-body">
 					{% for i in range(ti|length) %}
-						<a href="{{url_for('view',dbindex=ti[i][0], titulo=ti[i][1])}}" style="color: #2E64FE;" class="text-black titles-app" > {{ ti[i][1] }} </a><br>
-						<!--<div style="color: #04B431;">dbIndex=[{{ti[i][0]}}]</div>-->
+						<a href="{{url_for('view',dbindex=ti[i][0], titulo=ti[i][1])}}" style="color: #2E64FE; text-decoration: underline" class="text-black titles-app" > {{ ti[i][1] }} </a><br>
+							<div style="color: #04B431;">dbIndex=[{{ti[i][0]}}]</div>
 						<br>
 					{% endfor %}
 				</dir>
+				<div>
+					<ul class="pagination">
+						<li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+						{% for page in range(totalPage) %}
+							<li class="page-item"><a class="page-link" href="{{url_for('minigooglePage',numberResult=numberResult, totalPage=totalPage, actualPage=page)}}">{{page+1}}</a></li>
+						{% endfor %}							
+						<li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+					</ul>
+				</div>
 			</div>
-		</div>		
+		</div>
 
+				
+
+	</div>
+	<div style="background: #045FB4">
+			
+		<div class="container">
+			<div class="row" style="padding-top: 20px; padding-bottom: 20px;">
+				<div class="col-md-6">
+					<h3><label style="color: white;">Vea nuestro video aquí:</label></h3>
+					<div class="video-responsive"><iframe allow="autoplay; encrypted-media" allowfullscreen="" frameborder="0" height="720" src="https://www.youtube.com/embed/-j94kLbXnVk?ecver=1" width="1280"></iframe></div>
+				</div>
+				<div class="col-md-6">
+					<h3><label style="color: white;">Para ver el código fuente presione en la imagen:</label></h3>
+					<div>
+						<a href="https://youtu.be/-j94kLbXnVk" target="_blank">
+							<img style="width: 100%;" src="https://static1.squarespace.com/static/56b2c4a82b8dde025b9651ad/t/5903400e893fc0548adccf61/1493385231540/github.png">
+						</a>
+					</div>
+					
+				</div>
+			</div>
+		</div>
 	</div>
 </body>
 </html>

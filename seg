@@ -71,47 +71,63 @@ def minigoogle():
 
 	#print(listDbIndex)
 
-	totalPage = int(numberResult/20)+1
-	actualPage = 1
+	for ci in range(len(content)):
+		cont 		= content[ci]
+		cont_list 	= list(cont)
+		for i in range(len(cont_list)):
+			if (ord(cont_list[i]) == 241):
+				cont_list[i] = 'ni'
+				#cont_list[i] = 'ñ'
+				#print(ord(c))
+		cont = "".join(cont_list)
+		content[ci] = cont
 
-	return render_template('index.html', ti=listDbIndex, numberResult = numberResult, totalPage=totalPage, actualPage=actualPage)
+	for cont in content:
+		print (cont)
+	data = {}
+	data['titles'] = content
 
-@app.route('/minigoogle/<int:numberResult>/<int:totalPage>/<int:actualPage>') 
-def minigooglePage(numberResult, totalPage, actualPage):
-	global THIS_FOLDER
+	longitud = len(content)
+	numberResultsPaginate = int(numberResult/20)+1
+	print("paginate",numberResultsPaginate)
+	numberPagina = 1
+
+	return render_template('index.html', result=data, ti=listDbIndex, numberResult = numberResult, numberResultsPaginate = numberResultsPaginate, numberPagina=numberPagina)
+
+@app.route('/minigoogle/<int:numberResult>/<int:numberResultsPaginate>/<int:numberPagina>') 
+def minigooglePagina(numberResult, numberResultsPaginate, numberPagina):
 
 	APPFILE = 'core/toapp.txt'
 	FILENAME = os.path.join(THIS_FOLDER, APPFILE)
 	with open(FILENAME, 'r', encoding = 'ISO-8859-1') as r_files:
 		content = []
 		i = 1
-		content = r_files.readlines()[(20*(actualPage)):20*(actualPage+1)]
+		
+		content = r_files.readlines()[20:40]
 		
 		r_files.close()
 
 	listDbIndex = []
 
 	for ai in range(len(content)):
-
 		for j in range(len(content[ai])):
 			if content[ai][j:j+1] == '|':
 				listDbIndex.append([content[ai][0:j],content[ai][j+1:]])
 				break
 
-	return render_template('index.html', ti=listDbIndex, numberResult = numberResult, totalPage=totalPage, actualPage=actualPage)
+	print("paginate",numberResultsPaginate)
+	return render_template('index.html', ti=listDbIndex, numberResult = numberResult, numberResultsPaginate = numberResultsPaginate, numberPagina=numberPagina)
 
 @app.route('/view/<int:dbindex>/<string:titulo>')
 def view(dbindex, titulo):
-	#print("--->",dbindex, "-", titulo)
-	print("<<>><<>>",pylibfromCFFI.get_contenido('-'.encode('ISO-8859-1'), dbindex))
+	#print("<<>><<>>",pylibfromCFFI.get_contenido('-'.encode('ISO-8859-1'), dbindex))
 	contenido = pylibfromCFFI.get_contenido('-'.encode('ISO-8859-1'), dbindex)
 	return render_template('viewarticle.html', titulo=titulo, contenido = contenido)
 
 
 @app.route('/')
 def home():
-	totalPage = 0
-	return render_template('index.html', totalPage= totalPage)
+	return render_template('index.html')
 
 if __name__ == '__main__':
 	pylibfromCFFI.make_suffix_tree()
