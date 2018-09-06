@@ -4,7 +4,6 @@
 import os
 import pylibfromCFFI
 
-from numpy import *
 from flask import Flask
 from flask import request
 from flask import render_template
@@ -21,6 +20,8 @@ def minigoogle():
 
 	query = request.form.get('query')
 	print("query: ",query)
+
+	word = query
 
 
 	#MYFILE = 'core/comm/log.txt'
@@ -72,12 +73,12 @@ def minigoogle():
 	#print(listDbIndex)
 
 	totalPage = int(numberResult/20)+1
-	actualPage = 1
+	actualPage = 0
 
-	return render_template('index.html', ti=listDbIndex, numberResult = numberResult, totalPage=totalPage, actualPage=actualPage)
+	return render_template('index.html', ti=listDbIndex, numberResult = numberResult, totalPage=totalPage, actualPage=actualPage, word=word)
 
-@app.route('/minigoogle/<int:numberResult>/<int:totalPage>/<int:actualPage>') 
-def minigooglePage(numberResult, totalPage, actualPage):
+@app.route('/minigoogle/<int:numberResult>/<int:totalPage>/<int:actualPage>/<string:word>') 
+def minigooglePage(numberResult, totalPage, actualPage, word):
 	global THIS_FOLDER
 
 	APPFILE = 'core/toapp.txt'
@@ -98,12 +99,12 @@ def minigooglePage(numberResult, totalPage, actualPage):
 				listDbIndex.append([content[ai][0:j],content[ai][j+1:]])
 				break
 
-	return render_template('index.html', ti=listDbIndex, numberResult = numberResult, totalPage=totalPage, actualPage=actualPage)
+	return render_template('index.html', ti=listDbIndex, numberResult = numberResult, totalPage=totalPage, actualPage=actualPage, word=word)
 
 @app.route('/view/<int:dbindex>/<string:titulo>')
 def view(dbindex, titulo):
 	#print("--->",dbindex, "-", titulo)
-	print("<<>><<>>",pylibfromCFFI.get_contenido('-'.encode('ISO-8859-1'), dbindex))
+	#print("<<>><<>>",pylibfromCFFI.get_contenido('-'.encode('ISO-8859-1'), dbindex))
 	contenido = pylibfromCFFI.get_contenido('-'.encode('ISO-8859-1'), dbindex)
 	return render_template('viewarticle.html', titulo=titulo, contenido = contenido)
 
@@ -111,6 +112,7 @@ def view(dbindex, titulo):
 @app.route('/')
 def home():
 	totalPage = 0
+	word =""
 	return render_template('index.html', totalPage= totalPage)
 
 if __name__ == '__main__':

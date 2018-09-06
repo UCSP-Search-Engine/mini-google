@@ -28,7 +28,7 @@
 			</div>
 			<div class="col-md-8">
 				<form action="{{url_for('minigoogle')}}" method="POST">
-					<input class="form-control" type="text" name="query" placeholder="Search..." class="aside-query">
+					<input class="form-control" type="text" name="query" placeholder="Search..." value="{{word}}" class="aside-query">
 					<input type="submit" value="Search"  class="hidden">
 					<div style="padding: 5px; color: #6E6E6E; font-size: 14px;">Se encontraron {{numberResult}} resultados</div>
 				</form>
@@ -41,13 +41,26 @@
 					{% endfor %}
 				</dir>
 				<div>
-					<ul class="pagination">
-						<li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
-						{% for page in range(totalPage) %}
-							<li class="page-item"><a class="page-link" href="{{url_for('minigooglePage',numberResult=numberResult, totalPage=totalPage, actualPage=page)}}">{{page+1}}</a></li>
-						{% endfor %}							
-						<li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
-					</ul>
+					<nav data-pagination>
+  						<a href=# disabled><i class=ion-chevron-left></i></a>
+							<ul class="pagination">
+								<!--<li class="page-item"><a class="page-link" href="#">&laquo;</a></li>-->
+								{% for page in range(totalPage) %}
+									
+									{% if page == actualPage  %}
+										<li class="page-item active"><a class="page-link" href="{{url_for('minigooglePage',numberResult=numberResult, totalPage=totalPage, actualPage=page, word=word)}}">{{page+1}}</a></li>
+
+									{% else %}
+
+										<li class="page-item"><a class="page-link" href="{{url_for('minigooglePage',numberResult=numberResult, totalPage=totalPage, actualPage=page, word=word)}}">{{page+1}}</a></li>
+
+									{% endif %}
+
+								{% endfor %}							
+								<!--<li class="page-item"><a class="page-link" href="#">&raquo;</a></li>-->
+							</ul>
+						<a href=#2><i class=ion-chevron-right></i></a>
+					</nav>
 				</div>
 			</div>
 		</div>

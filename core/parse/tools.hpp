@@ -116,7 +116,8 @@ string DelMin(string s){
     int longitud=s.length();	
     for (int i = 0; i < longitud; i++){
     	if(esdeseado(s[i]) and (int)s[i]!=(int)')'){
-    		resultado=resultado+quitar_min(s[i]); 							
+    		//resultado=resultado+quitar_min(s[i]); 							
+    		resultado+=s[i]; 							
     	}
     	else{
     		char currentChar = ' ';

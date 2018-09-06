@@ -6,7 +6,6 @@
 #include <set>
 #include <functional>
 #include "parse/tools.hpp"
-#include <omp.h>
 
 using namespace std;
 
@@ -803,7 +802,7 @@ public:
 	        int i=0;
 
 			ofstream archivo;
-			archivo.open("toapp.txt", ios::out);
+			archivo.open("core/toapp.txt", ios::binary);
 			if(archivo.fail()){
 				cout<<"no se pudo abrir el archivo";
 				exit(1);
@@ -817,7 +816,7 @@ public:
 				//resultTitles.push_back(documentTitles[rit->second]);
 				//std::cout <<"dbIndex: "<< it->second << "\t coincidencias: " << it->first << "\n";
 				//printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->second, it->first);
-				printf("[%6d] | ", it->second);
+				//printf("[%6d] | ", it->second);
 				//cout<<mapContent.find(it->second)->second.titulo<<endl;
 				//cout<< documentTitles[it->second]<<endl;
 				//std::cout <<"dbIndex: "<< rit->second << " \t titulo: " << resultTitles[i] << "\t coincidencias: " << rit->first << "\n";
@@ -826,9 +825,10 @@ public:
 
 				/*archivo << documentTitles[it->second];
 				archivo <<"\n";*/
-				archivo << it->first;
+				archivo << it->second;
         		archivo <<"|";
-        		archivo << mapContent.find(it->first)->second.titulo;
+        		archivo << mapContent.find(it->second)->second.titulo;
+        		archivo << "\n";
 	            
 				/*bool contin = to20blocks(i);
 				if (contin != true){
