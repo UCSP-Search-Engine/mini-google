@@ -55,8 +55,6 @@ Ejecutar:
 
 ### Instalar requisitos en linux
 
-Instalar el framework de Python necesario para ejecutar la aplicacion web.
-
 Instalar Flask:
 
 ```
@@ -71,7 +69,11 @@ pip3 install cffi
 
 ### Instalar requisitos en MacOs
 
+Instalar **brew**
+
+```
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
 
 Instalar python3
 
