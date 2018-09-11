@@ -292,17 +292,11 @@ class SuffixTree
 		vector<string> words = w.getWords(text);
 		int i = 0;
 
-		bool FLAG=false;
-
 		for (; i<words.size(); i++)
 		{
-			//cout<<"----------------"<<endl;
-			//cout<<"-"<<words[i].word<<"-"<<words[i].index<<"-"<<endl;
-			//if (words.size()>10){
-			//}
-			
-			//cout<<"-->"<<endl;
-			if (words.size()>2){
+			bool FLAG=false;
+
+			if (words[i].size()>2){
 				for (int wi = 0; wi < words[i].size()-1; wi++){
 					if (words[i][wi]==words[i][wi+1]){
 						FLAG = true;
@@ -316,7 +310,6 @@ class SuffixTree
 			
 			for (int j = 0; j<suffix.size(); j++)
 			{
-				//cout<<"-"<<suffix[j].word<<"-"<<suffix[j].index<<"-"<<endl;
 				addSuffix(suffix[j], index);
 				//print();
 				//return;
