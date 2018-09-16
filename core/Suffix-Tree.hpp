@@ -779,9 +779,9 @@ public:
 	}
 
     //Function that return a map with the text index and the number of the coincidence
-    int find (string text, bool MODE)
+    int findQuery (string text, bool MODE, bool SUG)
     {
-		cout << "\n================================ Resultado de búsqueda ( "<< text<< " ) ==============================" << endl;
+		//cout << "\n================================ Resultado de búsqueda ( "<< text<< " ) ==============================" << endl;
 		clock_t t;
 		
 		Word word;
@@ -790,18 +790,31 @@ public:
 		t = clock();
 
 		if (words.size() == 1){
+
 			map<int, int> result = search(text);
 			multimap<int,int> multimap = invertMap(result);
 			t = clock() - t;
 			//vector<string> resultTitles;
-			
+			if (result.size()==0 && text.size() > 0){
+				string subtext = text.substr(0,text.size()-1);
+				findQuery(subtext, MODE, true);
+			}
+			else {
+				if (SUG == true){
+					cout << "\n================================ Sugerencia ( "<< text<< " ) ==============================" << endl;
+				}
+				else {
+					cout << "\n================================ Resultado de búsqueda ( "<< text<< " ) ==============================" << endl;
+				}		
+			}
+			;
 			printf("\nBúsqueda en %.8f segundos\n", (float)t/CLOCKS_PER_SEC);
 			printOneQuery(multimap, MODE);//, resultTitles);
 			return((int)result.size());
 		}
 		else{
 
-		
+			cout << "\n================================ Resultado de búsqueda ( "<< text<< " ) ==============================" << endl;
 			vector<map<int,int>> maps;
 			
 			for(string t: words)

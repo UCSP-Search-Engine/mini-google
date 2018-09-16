@@ -11,8 +11,6 @@ int main(){
 	MakeSuffixTree(mg);
 
 	while (true){
-		//cout<<"\n\nBusqueda"<<endl;
-		//cout<<"============================================================"<<endl;
 		string query_val;
 		cout<<"\rQuery: ";
 		getline(cin, query_val);
@@ -20,7 +18,7 @@ int main(){
 			continue;
 		}
 		query_val = Lower2(query_val);
-		mg->find(query_val, true);
+		mg->findQuery(query_val, true, false);
 		cout<<"\n================================== Final de busqueda ("<< query_val << ")================================\n"<<endl;
 	}
 
