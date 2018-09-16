@@ -41,19 +41,13 @@ string ParserData(string s){
 
 string recorrerMAP(string s,int  pos){
 	string resultado;
-	//cout<<"pos recorrer"<<pos<<endl;
 	s=s.substr(pos);int i;
-	//cout<<"s "<<s<<endl;
-	//system("PAUSE()");
 	for(i=1;i<s.length();i++){
 		if(s[i] == '"'){
 			break;
 		} 
 	}	
-	//cout<<"i "<<i<<endl;
 	resultado=s.substr(0,i);
-	//cout<<"resultado recorrer "<<resultado<<endl;
-	//system("PAUSE()");
 	resultado = ParserData(resultado);
 	return resultado;
 }
@@ -71,8 +65,6 @@ void cargarTexto(){
 	ifstream ficheroEntrada;
 
 	for(int k = 0;cont < 485000;k++){
-
-		//ficheroEntrada.open ("../../raw.es/spanishText_10000_15000");
 		url="raw.es/spanishText_"+to_string(cont)+'_'+to_string(cont+5000);
 		
 		cont=cont+5000;
@@ -298,7 +290,9 @@ class SuffixTree
 
 			if (words[i].size()>2){
 				for (int wi = 0; wi < words[i].size()-1; wi++){
-					if (words[i][wi]==words[i][wi+1]){
+					if (	words[i][wi] == words[i][wi+1] &&
+						 	words[i][wi] != 'r' 		   &&
+							words[i][wi] != 'l' ){
 						FLAG = true;
 					}
 				}
@@ -306,6 +300,10 @@ class SuffixTree
 			if (FLAG == true){continue;}
 			//cout<<"<--"<<endl;
 			
+			addSuffix(words[i], index);
+			
+			// Don't Add Suffix
+			/*
 			vector<string> suffix = w.getSuffix(words[i]);
 			
 			for (int j = 0; j<suffix.size(); j++)
@@ -315,6 +313,7 @@ class SuffixTree
 				//return;
 			}
 			suffix.clear();
+			*/
 		}
 		//
 		words.clear();
@@ -491,24 +490,7 @@ class SuffixTree
 				if (noCoinciden.size()>0)
 					node->edges.push_back(Edge(node, noCoinciden, index));
 			}
-			/*
-			//In case all the suffix coincide in the tree (we must not to add again).
-			if (noCoinciden.size() == 0)
-			{
-                //if the suffix is from a different text (push_back)
-
-                if (node->edges[edgePos].indexes[node->edges[edgePos].indexes.size() - 1] != index)
-                {
-				    node->edges[edgePos].putOtherIndex(index);
-                }
-                else //If the suffix is from the same text, add coincidence(+1).
-                {
-                   	node->edges[edgePos].addCantCoicidencia();
-                }
-			}
-			*/
 		}		
-		//system("pause");
 	}
 
 	void print(Node *node, int profundidad)
@@ -548,7 +530,6 @@ class MiniGoogle
 private:
 	int cantTree; // Number of trees to use
 	vector<SuffixTree> trees; // Vector that store all the trees
-	//SuffixTree tress;
     map<int, string> documentTitles; // Map that stores index, titles.
     int idTree;
 
@@ -587,17 +568,16 @@ public:
 		for (int j = 0; j < edge.indexes.size(); j++)
 		{
 			result[edge.indexes[j]] = edge.coincidences[j];
-				/*
-				it = result.find(edge.indexes[j]);
-				if (it != result.end()){
-					cout<<"+++"<<endl;
-					(*it).second = (*it).second + edge.coincidences[j];
-				}
-				else {
-					result[edge.indexes[j]] = edge.coincidences[j];
-				}
-				*/
-		
+			/*
+			it = result.find(edge.indexes[j]);
+			if (it != result.end()){
+				cout<<"+++"<<endl;
+				(*it).second = (*it).second + edge.coincidences[j];
+			}
+			else {
+				result[edge.indexes[j]] = edge.coincidences[j];
+			}
+			*/
 		}
 	}
 	template<typename K, typename V>
@@ -624,9 +604,6 @@ public:
 			string suffix = texto;
 			Node *node = trees[i].search2(suffix, parteCoinciden, edgePos);
 
-			
-			//cout << "suff:" << suffix << " coicide:" << parteCoinciden << endl;
-
             if (edgePos != -1 && suffix.size()==0)
 			{
 				buscarIndicesHojas(node->edges[edgePos], result);
@@ -647,7 +624,7 @@ public:
 		cout << endl;
 	}
 
-	bool to20blocks(int nblocks){//, ofstream &doc){
+	bool to20blocks(int nblocks){
 		char conf;
 		if (nblocks%20==0){
 			cout<<"\n\nVer mas(y/n) | Mostrar Documento(D/d)? ";
@@ -680,17 +657,17 @@ public:
 		}
 	}
 
-	void printResult2(map<int, int> result, bool MODE)//, vector<string> resultTitles)
+	//void printOneQuery(map<int, int> result, bool MODE)
+	void printOneQuery(multimap<int, int> result, bool MODE)
 	{
         int i=0;
 		std::multimap<int,int>::reverse_iterator it;
         if (MODE){
         	printf("\nResultados: %d\n\n", (int)result.size());
+			std::multimap<int,int>::reverse_iterator it;
 			for (it=result.rbegin(); it!=result.rend(); ++it){
-				//printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->first, it->second);
-				printf("[DbIndex = %6d] ", it->first);
-				cout<<mapContent.find(it->first)->second.titulo<<endl;
-				//cout<<documentTitles[it->first]<<endl;
+				printf("[DbIndex = %6d] ", it->second);
+				cout<<mapContent.find(it->second)->second.titulo<<endl;
 				i++;
 
 				bool contin = to20blocks(i);//, archivo);
@@ -722,18 +699,10 @@ public:
 			}
 
         	for (it=result.rbegin(); it!=result.rend(); ++it){
-				//printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->first, it->second);
-				//cout<<"titulo : "<< documentTitles[it->first]<<endl;
 				i++;
-        		/*archivo <<"[";
-        		archivo << i ;
-        		archivo <<"] ";
-        		archivo << documentTitles[it->first];*/
-        		//archivo <<"[";
         		archivo << it->first;
         		archivo <<"|";
         		archivo << mapContent.find(it->first)->second.titulo;
-        		//archivo << documentTitles[it->first];
         		archivo <<"\n";
 
         	}
@@ -741,7 +710,7 @@ public:
         }
 	}
 
-	void printResult(multimap<int,int> result, bool MODE)//, vector<string> resultTitles)//, vector<string> resultTitles)
+	void printSevQuery(multimap<int,int> result, bool MODE)
 	{
 		if (MODE){
 			printf("\nResultados: %d\n\n", (int)result.size());
@@ -752,17 +721,10 @@ public:
 	        int i=0;
 
 			std::multimap<int,int>::reverse_iterator it;
-			//for (auto const &pair: result) 
-			
 	  		for (it=result.rbegin(); it!=result.rend(); ++it)
 			{
-				//resultTitles.push_back(documentTitles[rit->second]);
-				//std::cout <<"dbIndex: "<< it->second << "\t coincidencias: " << it->first << "\n";
-				//printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->second, it->first);
-				printf("[%6d] | ", it->second);
+				printf("[DbIndex = %6d] ", it->second);
 				cout<<mapContent.find(it->second)->second.titulo<<endl;
-				//cout<< documentTitles[it->second]<<endl;
-				//std::cout <<"dbIndex: "<< rit->second << " \t titulo: " << resultTitles[i] << "\t coincidencias: " << rit->first << "\n";
 	            i++;
 	            
 				bool contin = to20blocks(i);//, archivo);
@@ -806,43 +768,12 @@ public:
 			
 	  		for (it=result.rbegin(); it!=result.rend(); ++it)
 			{
-				//resultTitles.push_back(documentTitles[rit->second]);
-				//std::cout <<"dbIndex: "<< it->second << "\t coincidencias: " << it->first << "\n";
-				//printf("[%2d] dbIndex: %8d | cnds: %8d | ", i+1, it->second, it->first);
-				//printf("[%6d] | ", it->second);
-				//cout<<mapContent.find(it->second)->second.titulo<<endl;
-				//cout<< documentTitles[it->second]<<endl;
-				//std::cout <<"dbIndex: "<< rit->second << " \t titulo: " << resultTitles[i] << "\t coincidencias: " << rit->first << "\n";
 	            i++;
-
-
-				/*archivo << documentTitles[it->second];
-				archivo <<"\n";*/
 				archivo << it->second;
         		archivo <<"|";
         		archivo << mapContent.find(it->second)->second.titulo;
         		archivo << "\n";
-	            
-				/*bool contin = to20blocks(i);
-				if (contin != true){
-					break;
-				}*/
-
-			}
-
-			/*char conf2;
-			cout<<"\nsalir(S/s)/document(D/d)? ";
-			cin>>conf2;
-			
-			if ((conf2 == 'd') || (conf2 == 'D')){
-				int docId;
-				cout<<"\nDocument(DbIndex) -> ";
-				cin>>docId;
-				cout<<endl;
-				cout<<mapContent.find(docId)->second.titulo<<endl;
-				cout<<"=================================================================================================\n"<<endl;
-				cout<<mapContent.find(docId)->second.contenido<<endl;		
-			}*/ 				
+			}				
 		}
 
 	}
@@ -855,17 +786,17 @@ public:
 		
 		Word word;
 		vector<string> words = word.getWords(text);
-		//vector<multimap<int,int>> mapsResults;
 		
 		t = clock();
 
 		if (words.size() == 1){
 			map<int, int> result = search(text);
+			multimap<int,int> multimap = invertMap(result);
 			t = clock() - t;
-			vector<string> resultTitles;
+			//vector<string> resultTitles;
 			
 			printf("\nBúsqueda en %.8f segundos\n", (float)t/CLOCKS_PER_SEC);
-			printResult2(result, MODE);//, resultTitles);
+			printOneQuery(multimap, MODE);//, resultTitles);
 			return((int)result.size());
 		}
 		else{
@@ -921,19 +852,18 @@ public:
 			}
 
 			multimap<int,int> multimap = invertMap(result);
+			/*
 			vector<string> resultTitles;	
 
 
 			std::multimap<int,int>::reverse_iterator rit;
 	  		for (rit=multimap.rbegin(); rit!=multimap.rend(); ++rit)
 			{
-	    		//std::cout << rit->first << " => " << rit->second << '\n';
 				resultTitles.push_back(documentTitles[rit->second]);
 			}
-
-			printResult(multimap, MODE);//, resultTitles);
-	     	//New <---------------------------------------------------------------
-	     	//, resultTitles);
+			*/
+			printSevQuery(multimap, MODE);//, resultTitles);
+			
 			return((int)multimap.size());
      	}
     }
