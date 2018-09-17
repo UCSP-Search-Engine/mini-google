@@ -33,6 +33,15 @@ def minigoogle():
 
 	numberResult = pylibfromCFFI.get_results(query.encode('ISO-8859-1'))
 
+	APPFILES = 'core/sug.txt'
+	FILENAME = os.path.join(THIS_FOLDER, APPFILES)
+	with open(FILENAME, 'r', encoding = 'ISO-8859-1') as r_file_sug:
+		sug = []
+		i = 1
+		sug = r_file_sug.readlines()
+		r_file_sug.close()
+
+
 	APPFILE = 'core/toapp.txt'
 	FILENAME = os.path.join(THIS_FOLDER, APPFILE)
 	with open(FILENAME, 'r', encoding = 'ISO-8859-1') as r_files:
@@ -75,7 +84,12 @@ def minigoogle():
 	totalPage = int(numberResult/20)+1
 	actualPage = 0
 
-	return render_template('index.html', ti=listDbIndex, numberResult = numberResult, totalPage=totalPage, actualPage=actualPage, word=word)
+	sugerencia = ""
+	lensugerencia = len(sug) 
+	for ai in range(len(sug)):
+		sugerencia = sug[ai]
+
+	return render_template('index.html', ti=listDbIndex, numberResult = numberResult, totalPage=totalPage, actualPage=actualPage, word=word, sugerencia=sugerencia, lensugerencia=lensugerencia)
 
 @app.route('/minigoogle/<int:numberResult>/<int:totalPage>/<int:actualPage>/<string:word>') 
 def minigooglePage(numberResult, totalPage, actualPage, word):
@@ -99,7 +113,9 @@ def minigooglePage(numberResult, totalPage, actualPage, word):
 				listDbIndex.append([content[ai][0:j],content[ai][j+1:]])
 				break
 
-	return render_template('index.html', ti=listDbIndex, numberResult = numberResult, totalPage=totalPage, actualPage=actualPage, word=word)
+	lensugerencia = 0
+
+	return render_template('index.html', ti=listDbIndex, numberResult = numberResult, totalPage=totalPage, actualPage=actualPage, word=word, lensugerencia=lensugerencia)
 
 @app.route('/view/<int:dbindex>/<string:titulo>')
 def view(dbindex, titulo):
@@ -113,7 +129,8 @@ def view(dbindex, titulo):
 def home():
 	totalPage = 0
 	word =""
-	return render_template('index.html', totalPage= totalPage)
+	lensugerencia = 0
+	return render_template('index.html', totalPage= totalPage, lensugerencia = lensugerencia)
 
 if __name__ == '__main__':
 	pylibfromCFFI.make_suffix_tree()

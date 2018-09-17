@@ -700,9 +700,9 @@ public:
 
         	for (it=result.rbegin(); it!=result.rend(); ++it){
 				i++;
-        		archivo << it->first;
+        		archivo << it->second;
         		archivo <<"|";
-        		archivo << mapContent.find(it->first)->second.titulo;
+        		archivo << mapContent.find(it->second)->second.titulo;
         		archivo <<"\n";
 
         	}
@@ -797,22 +797,34 @@ public:
 			//vector<string> resultTitles;
 			if (result.size()==0 && text.size() > 0){
 				string subtext = text.substr(0,text.size()-1);
-				findQuery(subtext, MODE, true);
+				return findQuery(subtext, MODE, true);
 			}
 			else {
 				if (SUG == true){
 					cout << "\n================================ Sugerencia ( "<< text<< " ) ==============================" << endl;
+					ofstream archivo;
+					archivo.open("core/sug.txt", ios::binary);
+					archivo << text;
+					archivo.close();
 				}
 				else {
+					ofstream archivo;
+					archivo.open("core/sug.txt", ios::binary);
+					archivo.close();
 					cout << "\n================================ Resultado de búsqueda ( "<< text<< " ) ==============================" << endl;
 				}		
+
+				printf("\nBúsqueda en %.8f segundos\n", (float)t/CLOCKS_PER_SEC);
+				printOneQuery(multimap, MODE);//, resultTitles);
+				return((int)result.size());
 			}
 			;
-			printf("\nBúsqueda en %.8f segundos\n", (float)t/CLOCKS_PER_SEC);
-			printOneQuery(multimap, MODE);//, resultTitles);
-			return((int)result.size());
 		}
 		else{
+
+			ofstream archivo;
+			archivo.open("core/sug.txt", ios::binary);
+			archivo.close();
 
 			cout << "\n================================ Resultado de búsqueda ( "<< text<< " ) ==============================" << endl;
 			vector<map<int,int>> maps;

@@ -13,7 +13,7 @@ long get_results(char *word){
     //string word;
     //getline(cin, word);
     string newWord = Lower(string(word));
-    long numberResults = mg->find(newWord, false);
+    long numberResults = mg->findQuery(newWord, false,false);
     return numberResults;
 }
 
